@@ -176,11 +176,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                              
+ db.exec(`                                                                                                                             
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                                       `);
+    )                                                                                                                                      `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -246,8 +246,9 @@ implement creating db table(s) for meeting room bookings, there can be multiple 
  8
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Created src/schema.ts with two tables:
 
@@ -285,3 +286,18 @@ rooms
  starts.
 
 Prompti 5:
+Why is the dist folder tracked by git (git status shows changes) even though we have dist/ in the .gitignore? How to remove from  
+ source control
+
+⏺ The .gitignore only prevents untracked files from being added. If dist/ was committed before being added to .gitignore, git continues  
+ tracking it.
+
+To remove it from source control while keeping the files on disk:
+
+git rm -r --cached dist
+
+Then commit the change:
+
+git commit -m "Remove dist from source control"
+
+The --cached flag removes files from git's index only, leaving them in your working directory.
