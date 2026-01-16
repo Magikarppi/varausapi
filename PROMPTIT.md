@@ -1,3 +1,4 @@
+Prompti 1:
 Set up node.js project with typescript. Use latest package versions. install nodemon, express, typescript and types for these.  
  Remember to add tsconfig file. create initial index.ts file. add script to package.json to start the express server and run in dev  
  with nodemon.
@@ -92,7 +93,7 @@ Scripts:
 
 Run npm run dev to start the development server.
 
-_Alkuperäinen AI-generoitu commit_
+Prompti 2:
 
 install and config sqlite
 
@@ -175,12 +176,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                               
+ db.exec(`                                                                                                                              
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                                       
-`);
+    )                                                                                                                                       `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -189,6 +189,7 @@ Usage:
 // Example: query  
  const users = db.prepare('SELECT \* FROM users').all();
 
+Prompti 3:
 what does the line db.pragma('journal_mode = WAL'); do in @src/db.ts  
  ⎿  Read src/db.ts (11 lines)
 
@@ -198,21 +199,89 @@ What it does:
 
 -   Instead of writing changes directly to the database file, SQLite writes them to a separate WAL file first
 -   Readers can continue reading the original database while a writer is writing to the WAL
--   Changes are periodically merged back into the main database (checkpointing)  
-
+-   Changes are periodically merged back into the main database (checkpointing)
 
 Benefits:
 
 -   Better concurrency - readers don't block writers and writers don't block readers
 -   Faster writes - sequential writes to WAL are faster than random writes to the database
--   Crash safety - if the app crashes, the database remains consistent  
-
+-   Crash safety - if the app crashes, the database remains consistent
 
 Trade-offs:
 
 -   Creates additional files (database.db-wal and database.db-shm)
 -   Slightly slower reads in some cases
--   All processes accessing the database must be on the same machine  
-
+-   All processes accessing the database must be on the same machine
 
 It's generally recommended for most applications, especially web servers with concurrent access.
+
+Prompti 4:
+implement creating db table(s) for meeting room bookings, there can be multiple meeting rooms.
+
+⏺ Write(src/schema.ts)  
+ ⎿  Wrote 34 lines to src/schema.ts  
+ 1 import db from './db';  
+ 2 export function initializeDatabase(): void {  
+ 3 db.exec(`  
+ 4 CREATE TABLE IF NOT EXISTS rooms (  
+ 5 id INTEGER PRIMARY KEY AUTOINCREMENT,  
+ 6 name TEXT NOT NULL UNIQUE,  
+ 7 capacity INTEGER,  
+ 8 created_at TEXT DEFAULT CURRENT_TIMESTAMP  
+ 9 )  
+ … +24 lines (ctrl+o to expand)
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 15 lines
+
+⏺ Update(src/index.ts)  
+ ⎿  Added 3 lines  
+ 1 import express, { Request, Response } from 'express';  
+ 2 +import { initializeDatabase } from './schema';  
+ 3  
+ 4 +initializeDatabase();  
+ 5 +  
+ 6 const app = express();  
+ 7 const PORT = process.env.PORT || 3000;  
+ 8
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Created src/schema.ts with two tables:
+
+rooms  
+ ┌────────────┬─────────┬───────────────────────────┐  
+ │ Column │ Type │ Description │  
+ ├────────────┼─────────┼───────────────────────────┤  
+ │ id │ INTEGER │ Primary key │  
+ ├────────────┼─────────┼───────────────────────────┤  
+ │ name │ TEXT │ Room name (unique) │  
+ ├────────────┼─────────┼───────────────────────────┤  
+ │ capacity │ INTEGER │ Optional seating capacity │  
+ ├────────────┼─────────┼───────────────────────────┤  
+ │ created_at │ TEXT │ Timestamp │  
+ └────────────┴─────────┴───────────────────────────┘  
+ bookings  
+ ┌────────────┬─────────┬────────────────────────────┐  
+ │ Column │ Type │ Description │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ id │ INTEGER │ Primary key │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ room_id │ INTEGER │ Foreign key to rooms │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ title │ TEXT │ Meeting title │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ booked_by │ TEXT │ Who booked it │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ start_time │ TEXT │ Booking start (ISO format) │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ end_time │ TEXT │ Booking end (ISO format) │  
+ ├────────────┼─────────┼────────────────────────────┤  
+ │ created_at │ TEXT │ Timestamp │  
+ └────────────┴─────────┴────────────────────────────┘  
+ Indexes are created on room_id and start_time/end_time for efficient queries. The database initializes automatically when the server  
+ starts.
+
+Prompti 5:
