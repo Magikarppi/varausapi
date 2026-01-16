@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { initializeDatabase } from './schema';
+import { initializeDatabase } from './db';
 
 initializeDatabase();
 

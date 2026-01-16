@@ -1,4 +1,5 @@
-Prompti 1:
+# Prompti 1:
+
 Set up node.js project with typescript. Use latest package versions. install nodemon, express, typescript and types for these.  
  Remember to add tsconfig file. create initial index.ts file. add script to package.json to start the express server and run in dev  
  with nodemon.
@@ -93,7 +94,7 @@ Scripts:
 
 Run npm run dev to start the development server.
 
-Prompti 2:
+# Prompti 2:
 
 install and config sqlite
 
@@ -176,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                             
+ db.exec(`                                                                                                                          
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                                      `);
+    )                                                                                                                                   `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -189,7 +190,8 @@ Usage:
 // Example: query  
  const users = db.prepare('SELECT \* FROM users').all();
 
-Prompti 3:
+# Prompti 3:
+
 what does the line db.pragma('journal_mode = WAL'); do in @src/db.ts  
  ⎿  Read src/db.ts (11 lines)
 
@@ -215,7 +217,8 @@ Trade-offs:
 
 It's generally recommended for most applications, especially web servers with concurrent access.
 
-Prompti 4:
+# Prompti 4:
+
 implement creating db table(s) for meeting room bookings, there can be multiple meeting rooms.
 
 ⏺ Write(src/schema.ts)  
@@ -285,7 +288,8 @@ rooms
  Indexes are created on room_id and start_time/end_time for efficient queries. The database initializes automatically when the server  
  starts.
 
-Prompti 5:
+# Prompti 5:
+
 Why is the dist folder tracked by git (git status shows changes) even though we have dist/ in the .gitignore? How to remove from  
  source control
 
@@ -301,3 +305,74 @@ Then commit the change:
 git commit -m "Remove dist from source control"
 
 The --cached flag removes files from git's index only, leaving them in your working directory.
+
+# Prompti 6:
+
+refactor db related stuff under src/db
+
+⏺ Bash(mkdir -p /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db)  
+ ⎿  (No content)
+
+⏺ Read(src/db.ts)  
+ ⎿  Read 11 lines
+
+⏺ Read(src/schema.ts)  
+ ⎿  Read 34 lines
+
+⏺ Write(src/db/connection.ts)  
+ ⎿  Wrote 11 lines to src/db/connection.ts  
+ 1 import Database, { Database as DatabaseType } from 'better-sqlite3';  
+ 2 import path from 'path';  
+ 3 const dbPath = process.env.DB_PATH || path.join(\_\_dirname, '..', '..', 'data', 'database.db');  
+ 4 const db: DatabaseType = new Database(dbPath);  
+ 5 db.pragma('journal_mode = WAL');  
+ 6 export default db;  
+ … +1 line (ctrl+o to expand)
+
+⏺ Write(src/db/schema.ts)  
+ ⎿  Wrote 34 lines to src/db/schema.ts  
+ 1 import db from './connection';  
+ 2 export function initializeDatabase(): void {  
+ 3 db.exec(`  
+ 4 CREATE TABLE IF NOT EXISTS rooms (  
+ 5 id INTEGER PRIMARY KEY AUTOINCREMENT,  
+ 6 name TEXT NOT NULL UNIQUE,  
+ 7 capacity INTEGER,  
+ 8 created_at TEXT DEFAULT CURRENT_TIMESTAMP  
+ 9 )  
+ … +24 lines (ctrl+o to expand)
+
+⏺ Write(src/db/index.ts)  
+ ⎿  Wrote 3 lines to src/db/index.ts  
+ 1 export { default as db } from './connection';  
+ 2 export { initializeDatabase } from './schema';
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 18 lines
+
+⏺ Update(src/index.ts)  
+ ⎿  Added 1 line, removed 1 line  
+ 1 import express, { Request, Response } from 'express';  
+ 2 -import { initializeDatabase } from './schema';  
+ 2 +import { initializeDatabase } from './db';  
+ 3  
+ 4 initializeDatabase();  
+ 5
+
+⏺ Bash(rm /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db.ts  
+ /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/schema.ts)  
+ ⎿  (No content)
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. New structure:
+
+src/db/  
+ ├── connection.ts # Database connection setup  
+ ├── schema.ts # Table definitions  
+ └── index.ts # Barrel export
+
+Import from anywhere:  
+ import { db, initializeDatabase } from './db';

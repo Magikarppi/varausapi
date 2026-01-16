@@ -1,4 +1,4 @@
-import db from './db';
+import db from './connection';
 
 export function initializeDatabase(): void {
   db.exec(`
