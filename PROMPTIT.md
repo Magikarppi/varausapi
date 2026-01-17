@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                            
+ db.exec(`                                                                                                           
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                     `);
+    )                                                                                                                    `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1183,3 +1183,75 @@ commit delete booking changes in Finnish
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
+
+# Prompti 19:
+
+add endpoint for viewing all bookings for a room
+
+⏺ Read(src/db/bookingsDao.ts)  
+ ⎿  Read 26 lines
+
+⏺ Update(src/db/bookingsDao.ts)  
+ ⎿  Added 8 lines  
+ 23 const result = deleteBookingById.run(id);  
+ 24 return result.changes > 0;  
+ 25 }  
+ 26 +  
+ 27 +const selectBookingsByRoom = db.prepare(`                                                                                 
+      28 +  SELECT * FROM bookings WHERE room_id = ? ORDER BY start_time                                                            
+      29 +`);  
+ 30 +  
+ 31 +export function getBookingsByRoom(roomId: number): Booking[] {  
+ 32 + return selectBookingsByRoom.all(roomId) as Booking[];  
+ 33 +}
+
+⏺ Read(src/routes/roomsRouter.ts)  
+ ⎿  Read 15 lines
+
+⏺ Update(src/routes/roomsRouter.ts)  
+ ⎿  Added 1 line, removed 1 line  
+ 1 import { Router, Request, Response } from 'express';  
+ 2 -import { createRoom } from '../db';  
+ 2 +import { createRoom, getBookingsByRoom } from '../db';  
+ 3 import { CreateRoomInput } from '../types';  
+ 4 import { validateCreateRoom } from '../middleware/validation';  
+ 5
+
+⏺ Update(src/routes/roomsRouter.ts)  
+ ⎿  Added 12 lines  
+ 11 res.status(201).json(room);  
+ 12 });  
+ 13  
+ 14 +router.get('/:id/bookings', (req: Request<{ id: string }>, res: Response) => {  
+ 15 + const roomId = parseInt(req.params.id, 10);  
+ 16 +  
+ 17 + if (isNaN(roomId)) {  
+ 18 + res.status(400).json({ error: 'Invalid room id' });  
+ 19 + return;  
+ 20 + }  
+ 21 +  
+ 22 + const bookings = getBookingsByRoom(roomId);  
+ 23 + res.json(bookings);  
+ 24 +});  
+ 25 +  
+ 26 export default router;
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Added endpoint to view room bookings:
+
+DAO (src/db/bookingsDao.ts):  
+ export function getBookingsByRoom(roomId: number): Booking[]  
+ Returns bookings ordered by start_time.
+
+Endpoint (src/routes/roomsRouter.ts):
+
+-   GET /rooms/:id/bookings
+-   Returns array of bookings for the room
+-   Returns 400 if invalid room id  
+
+
+Example:  
+ curl http://localhost:3000/rooms/1/bookings

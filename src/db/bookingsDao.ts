@@ -23,3 +23,11 @@ export function deleteBooking(id: number): boolean {
   const result = deleteBookingById.run(id);
   return result.changes > 0;
 }
+
+const selectBookingsByRoom = db.prepare(`
+  SELECT * FROM bookings WHERE room_id = ? ORDER BY start_time
+`);
+
+export function getBookingsByRoom(roomId: number): Booking[] {
+  return selectBookingsByRoom.all(roomId) as Booking[];
+}
