@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                               
+ db.exec(`                                                                                                              
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                        `);
+    )                                                                                                                       `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -959,8 +959,7 @@ SQLite limitations:
  SQLite doesn't have a native TIMESTAMP WITH TIMEZONE type. Options are:
 
 -   TEXT - Store ISO 8601 strings (e.g., 2026-01-17T10:00:00Z) - current approach
--   INTEGER - Unix timestamps (milliseconds/seconds since epoch)  
-
+-   INTEGER - Unix timestamps (milliseconds/seconds since epoch)
 
 My recommendation: Keep TEXT in SQLite, keep string in TypeScript
 
@@ -970,15 +969,13 @@ Reasons:
 2. Date objects in TypeScript add serialization complexity - you'd need to convert to/from strings at the API boundary and  
    database layer anyway
 3. SQLite's datetime functions work well with ISO 8601 text (datetime(), strftime())
-4. Simpler validation - just validate the string format in middleware  
-
+4. Simpler validation - just validate the string format in middleware
 
 If you do want Date in TypeScript:
 
 -   Keep string in the input/output interfaces (API contract)
 -   Only use Date internally if you need date math
--   Store as ISO 8601 TEXT in SQLite (with UTC/Z suffix)  
-
+-   Store as ISO 8601 TEXT in SQLite (with UTC/Z suffix)
 
 What I'd actually change:  
  Add validation in middleware to ensure start_time and end_time are valid ISO 8601 strings and that start_time < end_time.
@@ -1024,8 +1021,9 @@ Would you like me to add that validation instead?
  26
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Implemented in both places:
 
@@ -1040,3 +1038,25 @@ Database (src/db/schema.ts):
 
 Note: The CHECK constraint only applies to new databases. For the existing data/database.db, you'd need to delete it and restart  
  the server to recreate the table with the constraint (or run a migration to recreate the table).
+
+# Prompti 16:
+
+commit these changes in Finnish
+
+⏺ Bash(git status && git diff)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +169 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/schema.ts src/middleware/validation.ts PROMPTIT.md && git commit -m "lisäys: varauksen alkuajan ja loppuajan  
+ validointi…)  
+ ⎿  [main 66018b2] lisäys: varauksen alkuajan ja loppuajan validointi  
+ 3 files changed, 110 insertions(+), 3 deletions(-)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
