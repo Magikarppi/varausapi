@@ -6,9 +6,14 @@ import { validateCreateRoom } from '../middleware/validation';
 const router = Router();
 
 router.post('/', validateCreateRoom, (req: Request, res: Response) => {
-  const { name, capacity } = req.body as CreateRoomInput;
-  const room = createRoom({ name, capacity });
-  res.status(201).json(room);
+  try {
+    const { name, capacity } = req.body as CreateRoomInput;
+    const room = createRoom({ name, capacity });
+    res.status(201).json(room);
+  } catch (error) {
+    console.error('Error creating room:', error);
+    res.status(500).json({ error: 'Failed to create room' });
+  }
 });
 
 router.get('/:id/bookings', (req: Request<{ id: string }>, res: Response) => {
@@ -19,8 +24,13 @@ router.get('/:id/bookings', (req: Request<{ id: string }>, res: Response) => {
     return;
   }
 
-  const bookings = getBookingsByRoom(roomId);
-  res.json(bookings);
+  try {
+    const bookings = getBookingsByRoom(roomId);
+    res.json(bookings);
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
 });
 
 export default router;

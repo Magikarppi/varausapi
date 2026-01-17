@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                             
+ db.exec(`                                                                                            
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                      `);
+    )                                                                                                     `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1803,8 +1803,7 @@ Toiminnot ✅
  Tekniset reunaehdot ✅
 
 -   TypeScript (tuttu kieli)
--   SQLite (yksinkertainen, ei asennusta)  
-
+-   SQLite (yksinkertainen, ei asennusta)
 
 Laatu ✅  
  ┌──────────────────┬───────────────────────────────────────────────────────┐  
@@ -1820,3 +1819,148 @@ Laatu ✅
 
 Tietokantavirheitä ei käsitellä try-catch:lla. Jos esim. createBooking() heittää virheen, palvelin kaatuu. Haluatko että lisään  
  virheenkäsittelyn?
+
+# Prompti 33:
+
+❯ yes add the error handling
+
+⏺ Write(src/routes/bookingsRouter.ts)  
+ ⎿  Added 19 lines, removed 9 lines  
+ 6 const router = Router();  
+ 7  
+ 8 router.post('/', validateCreateBooking, (req: Request, res: Response) => {  
+ 9 - const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;  
+ 10 - const booking = createBooking({ room_id, title, booked_by, start_time, end_time });  
+ 11 - res.status(201).json(booking);  
+ 9 + try {  
+ 10 + const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;  
+ 11 + const booking = createBooking({ room_id, title, booked_by, start_time, end_time });  
+ 12 + res.status(201).json(booking);  
+ 13 + } catch (error) {  
+ 14 + console.error('Error creating booking:', error);  
+ 15 + res.status(500).json({ error: 'Failed to create booking' });  
+ 16 + }  
+ 17 });  
+ 18  
+ 19 router.delete('/:id', (req: Request<{ id: string }>, res: Response) => {  
+ ...  
+ 24 return;  
+ 25 }  
+ 26  
+ 22 - const deleted = deleteBooking(id);  
+ 27 + try {  
+ 28 + const deleted = deleteBooking(id);  
+ 29  
+ 24 - if (!deleted) {  
+ 25 - res.status(404).json({ error: 'Booking not found' });  
+ 26 - return;  
+ 27 - }  
+ 30 + if (!deleted) {  
+ 31 + res.status(404).json({ error: 'Booking not found' });  
+ 32 + return;  
+ 33 + }  
+ 34  
+ 29 - res.status(204).send();  
+ 35 + res.status(204).send();  
+ 36 + } catch (error) {  
+ 37 + console.error('Error deleting booking:', error);  
+ 38 + res.status(500).json({ error: 'Failed to delete booking' });  
+ 39 + }  
+ 40 });  
+ 41  
+ 42 export default router;
+
+⏺ Write(src/routes/roomsRouter.ts)  
+ ⎿  Added 15 lines, removed 5 lines  
+ 6 const router = Router();  
+ 7  
+ 8 router.post('/', validateCreateRoom, (req: Request, res: Response) => {  
+ 9 - const { name, capacity } = req.body as CreateRoomInput;  
+ 10 - const room = createRoom({ name, capacity });  
+ 11 - res.status(201).json(room);  
+ 9 + try {  
+ 10 + const { name, capacity } = req.body as CreateRoomInput;  
+ 11 + const room = createRoom({ name, capacity });  
+ 12 + res.status(201).json(room);  
+ 13 + } catch (error) {  
+ 14 + console.error('Error creating room:', error);  
+ 15 + res.status(500).json({ error: 'Failed to create room' });  
+ 16 + }  
+ 17 });  
+ 18  
+ 19 router.get('/:id/bookings', (req: Request<{ id: string }>, res: Response) => {  
+ ...  
+ 24 return;  
+ 25 }  
+ 26  
+ 22 - const bookings = getBookingsByRoom(roomId);  
+ 23 - res.json(bookings);  
+ 27 + try {  
+ 28 + const bookings = getBookingsByRoom(roomId);  
+ 29 + res.json(bookings);  
+ 30 + } catch (error) {  
+ 31 + console.error('Error fetching bookings:', error);  
+ 32 + res.status(500).json({ error: 'Failed to fetch bookings' });  
+ 33 + }  
+ 34 });  
+ 35  
+ 36 export default router;
+
+⏺ Write(src/middleware/errorHandler.ts)  
+ ⎿  Wrote 12 lines to src/middleware/errorHandler.ts  
+ 1 import { Request, Response, NextFunction } from 'express';  
+ 2 export function errorHandler(  
+ 3 err: Error,  
+ 4 req: Request,  
+ 5 res: Response,  
+ 6 \_next: NextFunction  
+ 7 ): void {  
+ 8 console.error('Unhandled error:', err);  
+ 9 res.status(500).json({ error: 'Internal server error' });  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 20 lines
+
+⏺ Write(src/index.ts)  
+ ⎿  Added 3 lines  
+ 1 import express, { Request, Response } from 'express';  
+ 2 import roomsRouter from './routes/roomsRouter';  
+ 3 import bookingsRouter from './routes/bookingsRouter';  
+ 4 +import { errorHandler } from './middleware/errorHandler';  
+ 5  
+ 6 const app = express();  
+ 7 const PORT = process.env.PORT || 3000;  
+ ...  
+ 15 app.use('/rooms', roomsRouter);  
+ 16 app.use('/bookings', bookingsRouter);  
+ 17  
+ 18 +app.use(errorHandler);  
+ 19 +  
+ 20 app.listen(PORT, () => {  
+ 21 console.log(`Server is running on http://localhost:${PORT}`);  
+ 22 });
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Added error handling:
+
+Route handlers - try-catch around all database operations:
+
+-   bookingsRouter.ts - POST and DELETE endpoints
+-   roomsRouter.ts - POST and GET endpoints
+-   Returns 500 with user-friendly error message
+-   Logs detailed error to console  
+
+
+Global error handler (src/middleware/errorHandler.ts):
+
+-   Catches any unhandled errors
+-   Returns 500 Internal server error
+-   Added to index.ts as last middleware  
+
+
+Example response on DB error:  
+ { "error": "Failed to create booking" }
