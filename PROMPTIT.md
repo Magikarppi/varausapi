@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                  
+ db.exec(`                                                                                                 
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                           `);
+    )                                                                                                          `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1637,3 +1637,47 @@ Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.st
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
+
+# Prompti 28:
+
+❯ when trying to add new booking wit data {"room_id": 1, "title": "Team meeting", "booked_by": "user@example.com", "start_time":  
+ "2026-01-17T812:00:00Z", "end_time": "2026-01-18T13:00:00Z"} I get SqliteError: non-deterministic use of datetime() in a CHECK  
+ constraint  
+ at createBooking (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db/bookingsDao.ts:10:32)  
+ at /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/routes/bookingsRouter.ts:10:32  
+ at Layer.handleRequest (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/layer.js:152:17)  
+ at next (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/route.js:157:13)  
+ at validateCreateBooking (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/middleware/validation.ts:34:3)  
+ at Layer.handleRequest (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/layer.js:152:17)  
+ at next (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/route.js:157:13)  
+ at Route.dispatch (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/route.js:117:3)  
+ at handle (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/index.js:435:11)  
+ at Layer.handleRequest (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/layer.js:152:17)
+
+⏺ The datetime('now') in CHECK constraints is not allowed in SQLite because it's non-deterministic. Since the middleware already validates  
+ this, let me remove those constraints from the database.
+
+⏺ Read(src/db/connection.ts)  
+ ⎿  Read 45 lines
+
+⏺ Update(src/db/connection.ts)  
+ ⎿  Added 1 line, removed 3 lines  
+ 27 end_time TEXT NOT NULL,  
+ 28 created_at TEXT DEFAULT CURRENT_TIMESTAMP,  
+ 29 FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,  
+ 30 - CHECK (start_time < end_time),  
+ 31 - CHECK (start_time >= datetime('now')),  
+ 32 - CHECK (end_time >= datetime('now'))  
+ 30 + CHECK (start_time < end_time)  
+ 31 )  
+ 32 `);  
+ 33
+
+⏺ Bash(rm -f /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/data/database.db\* && npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Fixed. Removed the datetime('now') CHECK constraints from the database - SQLite doesn't allow non-deterministic functions in CHECK  
+ constraints. The middleware already handles past time validation, so the database only keeps CHECK (start_time < end_time).
+
+Deleted the old database file so the table will be recreated on next server start.
