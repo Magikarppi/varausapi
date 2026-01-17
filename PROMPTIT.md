@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                          
+ db.exec(`                                                                                                                        
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                                   `);
+    )                                                                                                                                 `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -364,8 +364,9 @@ refactor db related stuff under src/db
  ⎿  (No content)
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. New structure:
 
@@ -376,3 +377,160 @@ src/db/
 
 Import from anywhere:  
  import { db, initializeDatabase } from './db';
+
+# Prompti 7:
+
+add initial endpoint, DAO and query for booking a room for some time slot
+
+⏺ I'll help you add a room booking feature. Let me first explore the codebase to understand the  
+ existing structure.
+
+⏺ Explore(Explore codebase structure)  
+ ⎿  Done (18 tool uses · 27.3k tokens · 31s)
+
+⏺ Now I understand the structure. The database already has rooms and bookings tables defined. Let me  
+ create the booking feature.
+
+⏺ Read(src/db/schema.ts)  
+ ⎿  Read 34 lines
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 18 lines
+
+⏺ Read(src/db/index.ts)  
+ ⎿  Read 3 lines
+
+⏺ Now I'll create the bookings DAO and endpoint.
+
+⏺ Write(src/db/bookingsDao.ts)  
+ ⎿  Wrote 34 lines to src/db/bookingsDao.ts  
+ 1 import db from './connection';  
+ 2 export interface Booking {  
+ 3 id: number;  
+ 4 room_id: number;  
+ 5 title: string;  
+ 6 booked_by: string;  
+ 7 start_time: string;  
+ 8 end_time: string;  
+ 9 created_at: string;  
+ … +24 lines (ctrl+o to expand)
+
+⏺ Update(src/db/index.ts)  
+ ⎿  Added 1 line  
+ 1 export { default as db } from './connection';  
+ 2 export { initializeDatabase } from './schema';  
+ 3 +export \* from './bookingsDao';
+
+⏺ Update(src/index.ts)  
+ ⎿  Added 1 line, removed 1 line  
+ 1 import express, { Request, Response } from 'express';  
+ 2 -import { initializeDatabase } from './db';  
+ 2 +import { initializeDatabase, createBooking, CreateBookingInput } from './db';  
+ 3  
+ 4 initializeDatabase();  
+ 5
+
+⏺ Update(src/index.ts)  
+ ⎿  Added 12 lines  
+ 12 res.json({ message: 'Hello, World!' });  
+ 13 });  
+ 14  
+ 15 +app.post('/bookings', (req: Request, res: Response) => {  
+ 16 + const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookin  
+ +gInput;  
+ 17 +  
+ 18 + if (!room_id || !title || !booked_by || !start_time || !end_time) {  
+ 19 + res.status(400).json({ error: 'Missing required fields' });  
+ 20 + return;  
+ 21 + }  
+ 22 +  
+ 23 + const booking = createBooking({ room_id, title, booked_by, start_time, end_time });  
+ 24 + res.status(201).json(booking);  
+ 25 +});  
+ 26 +  
+ 27 app.listen(PORT, () => {  
+ 28 console.log(`Server is running on http://localhost:${PORT}`);  
+ 29 });
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
+
+⏺ Done. I've added the room booking feature:
+
+Created src/db/bookingsDao.ts:
+
+-   Booking and CreateBookingInput interfaces
+-   createBooking() function using a prepared statement
+
+Updated src/db/index.ts:
+
+-   Exports the bookings DAO
+
+Updated src/index.ts:
+
+-   POST /bookings endpoint that accepts:
+    -   room_id (number)
+    -   title (string)
+    -   booked_by (string)
+    -   start_time (string, ISO format)
+    -   end_time (string, ISO format)
+-   Returns 201 with the created booking, or 400 if fields are missing
+
+Example request:  
+ curl -X POST http://localhost:3000/bookings \  
+ -H "Content-Type: application/json" \  
+ -d '{"room_id": 1, "title": "Team meeting", "booked_by": "user@example.com", "start_time":  
+ "2026-01-17T10:00:00Z", "end_time": "2026-01-17T11:00:00Z"}'
+
+# Prompti 8:
+
+give me a few useful select queries to run against the db in sqlite terminal for the rooms and  
+ bookings tables
+
+⏺ Here are some useful queries for the SQLite terminal:
+
+-- List all rooms  
+ SELECT \* FROM rooms;
+
+-- List all bookings with room names  
+ SELECT b.id, r.name AS room, b.title, b.booked_by, b.start_time, b.end_time  
+ FROM bookings b  
+ JOIN rooms r ON b.room_id = r.id;
+
+-- Bookings for a specific room  
+ SELECT \* FROM bookings WHERE room_id = 1;
+
+-- Bookings for today  
+ SELECT \* FROM bookings  
+ WHERE date(start_time) = date('now');
+
+-- Upcoming bookings (from now onwards)  
+ SELECT b.\*, r.name AS room_name  
+ FROM bookings b  
+ JOIN rooms r ON b.room_id = r.id  
+ WHERE start_time >= datetime('now')  
+ ORDER BY start_time;
+
+-- Check for overlapping bookings in a room  
+ SELECT \* FROM bookings  
+ WHERE room_id = 1  
+ AND start_time < '2026-01-17T11:00:00Z'  
+ AND end_time > '2026-01-17T10:00:00Z';
+
+-- Count bookings per room  
+ SELECT r.name, COUNT(b.id) AS booking_count  
+ FROM rooms r  
+ LEFT JOIN bookings b ON r.id = b.room_id  
+ GROUP BY r.id;
+
+-- Find available rooms at a specific time  
+ SELECT \* FROM rooms  
+ WHERE id NOT IN (  
+ SELECT room_id FROM bookings  
+ WHERE start_time < '2026-01-17T11:00:00Z'  
+ AND end_time > '2026-01-17T10:00:00Z'  
+ );
+
+Run with: sqlite3 data/database.db then paste the query.
