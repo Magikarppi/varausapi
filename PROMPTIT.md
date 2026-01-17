@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                       
+ db.exec(`                                                                                                                    
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                                `);
+    )                                                                                                                             `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -594,31 +594,230 @@ add endpoint, dao and query for adding a room
  29
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Added the room creation feature:
 
 Created src/db/roomsDao.ts:
 
 -   Room and CreateRoomInput interfaces
--   createRoom() function using a prepared statement  
-
+-   createRoom() function using a prepared statement
 
 Updated src/db/index.ts:
 
--   Exports the rooms DAO  
-
+-   Exports the rooms DAO
 
 Updated src/index.ts:
 
 -   POST /rooms endpoint that accepts:
     -   name (string, required)
     -   capacity (number, optional)
--   Returns 201 with the created room, or 400 if name is missing  
-
+-   Returns 201 with the created room, or 400 if name is missing
 
 Example request:  
  curl -X POST http://localhost:3000/rooms \  
  -H "Content-Type: application/json" \  
  -d '{"name": "Conference Room A", "capacity": 10}'
+
+# Prompti 10:
+
+refactor endpoints under routes (create bookingsRouter and roomsRouter) and move typescript typings under src/types.ts
+
+⏺ Read(src/db/bookingsDao.ts)  
+ ⎿  Read 34 lines
+
+⏺ Read(src/db/roomsDao.ts)  
+ ⎿  Read 32 lines
+
+⏺ Write(src/types.ts)  
+ ⎿  Wrote 30 lines to src/types.ts  
+ 1 export interface Room {  
+ 2 id: number;  
+ 3 name: string;  
+ 4 capacity: number | null;  
+ 5 created_at: string;  
+ 6 }  
+ 7 export interface CreateRoomInput {  
+ 8 name: string;  
+ 9 capacity?: number | null;  
+ … +20 lines (ctrl+o to expand)
+
+⏺ Write(src/routes/bookingsRouter.ts)  
+ ⎿  Wrote 20 lines to src/routes/bookingsRouter.ts  
+ 1 import { Router, Request, Response } from 'express';  
+ 2 import { createBooking } from '../db';  
+ 3 import { CreateBookingInput } from '../types';  
+ 4 const router = Router();  
+ 5 router.post('/', (req: Request, res: Response) => {  
+ 6 const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;  
+ 7 if (!room_id || !title || !booked_by || !start_time || !end_time) {  
+ … +10 lines (ctrl+o to expand)
+
+⏺ Write(src/routes/roomsRouter.ts)  
+ ⎿  Wrote 20 lines to src/routes/roomsRouter.ts  
+ 1 import { Router, Request, Response } from 'express';  
+ 2 import { createRoom } from '../db';  
+ 3 import { CreateRoomInput } from '../types';  
+ 4 const router = Router();  
+ 5 router.post('/', (req: Request, res: Response) => {  
+ 6 const { name, capacity } = req.body as CreateRoomInput;  
+ 7 if (!name) {  
+ … +10 lines (ctrl+o to expand)
+
+⏺ Update(src/db/bookingsDao.ts)  
+ ⎿  Added 1 line, removed 18 lines  
+ 1 import db from './connection';  
+ 2 +import { Booking, CreateBookingInput } from '../types';  
+ 3  
+ 3 -export interface Booking {  
+ 4 - id: number;  
+ 5 - room_id: number;  
+ 6 - title: string;  
+ 7 - booked_by: string;  
+ 8 - start_time: string;  
+ 9 - end_time: string;  
+ 10 - created_at: string;  
+ 11 -}  
+ 12 -  
+ 13 -export interface CreateBookingInput {  
+ 14 - room_id: number;  
+ 15 - title: string;  
+ 16 - booked_by: string;  
+ 17 - start_time: string;  
+ 18 - end_time: string;  
+ 19 -}  
+ 20 -  
+ 4 const insertBooking = db.prepare(`  
+ 5 INSERT INTO bookings (room_id, title, booked_by, start_time, end_time)  
+ 6 VALUES (@room_id, @title, @booked_by, @start_time, @end_time)
+
+⏺ Update(src/db/roomsDao.ts)  
+ ⎿  Added 1 line, removed 12 lines  
+ 1 import db from './connection';  
+ 2 +import { Room, CreateRoomInput } from '../types';  
+ 3  
+ 3 -export interface Room {  
+ 4 - id: number;  
+ 5 - name: string;  
+ 6 - capacity: number | null;  
+ 7 - created_at: string;  
+ 8 -}  
+ 9 -  
+ 10 -export interface CreateRoomInput {  
+ 11 - name: string;  
+ 12 - capacity?: number | null;  
+ 13 -}  
+ 14 -  
+ 4 const insertRoom = db.prepare(`  
+ 5 INSERT INTO rooms (name, capacity)  
+ 6 VALUES (@name, @capacity)
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 42 lines
+
+⏺ Write(src/index.ts)  
+ ⎿  Added 5 lines, removed 24 lines  
+ 1 import express, { Request, Response } from 'express';  
+ 2 -import { initializeDatabase, createBooking, CreateBookingInput, createRoom, CreateRoomInput } from './db';  
+ 2 +import { initializeDatabase } from './db';  
+ 3 +import roomsRouter from './routes/roomsRouter';  
+ 4 +import bookingsRouter from './routes/bookingsRouter';  
+ 5  
+ 6 initializeDatabase();  
+ 7  
+ ...  
+ 14 res.json({ message: 'Hello, World!' });  
+ 15 });  
+ 16  
+ 15 -app.post('/rooms', (req: Request, res: Response) => {  
+ 16 - const { name, capacity } = req.body as CreateRoomInput;  
+ 17 +app.use('/rooms', roomsRouter);  
+ 18 +app.use('/bookings', bookingsRouter);  
+ 19  
+ 18 - if (!name) {  
+ 19 - res.status(400).json({ error: 'Missing required field: name' });  
+ 20 - return;  
+ 21 - }  
+ 22 -  
+ 23 - const room = createRoom({ name, capacity });  
+ 24 - res.status(201).json(room);  
+ 25 -});  
+ 26 -  
+ 27 -app.post('/bookings', (req: Request, res: Response) => {  
+ 28 - const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;  
+ 29 -  
+ 30 - if (!room_id || !title || !booked_by || !start_time || !end_time) {  
+ 31 - res.status(400).json({ error: 'Missing required fields' });  
+ 32 - return;  
+ 33 - }  
+ 34 -  
+ 35 - const booking = createBooking({ room_id, title, booked_by, start_time, end_time });  
+ 36 - res.status(201).json(booking);  
+ 37 -});  
+ 38 -  
+ 20 app.listen(PORT, () => {  
+ 21 console.log(`Server is running on http://localhost:${PORT}`);  
+ 22 });
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
+
+⏺ Done. Refactored the codebase:
+
+New structure:  
+ src/  
+ ├── index.ts # Main app, uses routers  
+ ├── types.ts # All TypeScript interfaces  
+ ├── db/  
+ │ ├── index.ts  
+ │ ├── connection.ts  
+ │ ├── schema.ts  
+ │ ├── bookingsDao.ts # Imports types from ../types  
+ │ └── roomsDao.ts # Imports types from ../types  
+ └── routes/  
+ ├── bookingsRouter.ts # POST /bookings  
+ └── roomsRouter.ts # POST /rooms
+
+Changes:
+
+-   src/types.ts - Contains Room, CreateRoomInput, Booking, CreateBookingInput
+-   src/routes/roomsRouter.ts - Handles /rooms routes
+-   src/routes/bookingsRouter.ts - Handles /bookings routes
+-   DAOs now import types from ../types
+-   index.ts mounts routers with app.use('/rooms', roomsRouter) etc.
+
+# Prompti 11:
+
+commit the changes. make the commit message in Finnish
+
+⏺ Bash(git diff --staged && git diff)  
+ ⎿  diff --git a/PROMPTIT.md b/PROMPTIT.md  
+ index ca85f04..631dbbc 100644  
+ --- a/PROMPTIT.md  
+ … +324 lines (ctrl+o to expand)
+
+⏺ Bash(git log --oneline -5)  
+ ⎿  3d78332 Lisäys: AI-koodia huoneen lisäys endpoint, query ja dao  
+ f2d399b Lisäys: AI-koodia huoneen varaukseen endpoint + query ja dao  
+ 892b48d refaktorointi: siirrä tietokantaan liittyvät asiat db kansioon  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/routes/ src/types.ts src/db/bookingsDao.ts src/db/roomsDao.ts src/index.ts && git commit -m "refaktorointi:  
+ siirrä endpointit routes-kansioon ja tyy…)  
+ ⎿  [main b7c33c3] refaktorointi: siirrä endpointit routes-kansioon ja tyypit types.ts-tiedostoon  
+ 6 files changed, 74 insertions(+), 54 deletions(-)  
+ create mode 100644 src/routes/bookingsRouter.ts  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 3 commits.  
+ (use "git push" to publish your local commits)  
+ … +7 lines (ctrl+o to expand)
+
+⏺ Committed successfully. Branch is now 3 commits ahead of origin/main. Only PROMPTIT.md remains modified (not included in this  
+ commit).

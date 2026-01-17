@@ -1,16 +1,5 @@
 import db from './connection';
-
-export interface Room {
-  id: number;
-  name: string;
-  capacity: number | null;
-  created_at: string;
-}
-
-export interface CreateRoomInput {
-  name: string;
-  capacity?: number | null;
-}
+import { Room, CreateRoomInput } from '../types';
 
 const insertRoom = db.prepare(`
   INSERT INTO rooms (name, capacity)
