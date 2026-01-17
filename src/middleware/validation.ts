@@ -14,6 +14,17 @@ export function validateCreateBooking(req: Request, res: Response, next: NextFun
     return;
   }
 
+  const now = new Date().toISOString();
+  if (start_time < now) {
+    res.status(400).json({ error: 'start_time cannot be in the past' });
+    return;
+  }
+
+  if (end_time < now) {
+    res.status(400).json({ error: 'end_time cannot be in the past' });
+    return;
+  }
+
   next();
 }
 

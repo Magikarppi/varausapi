@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                         
+ db.exec(`                                                                                                        
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                  `);
+    )                                                                                                                 `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1289,15 +1289,13 @@ Pros of middleware:
 
 -   Reusable across endpoints
 -   Consistent error messages
--   Cleaner route handlers  
-
+-   Cleaner route handlers
 
 Cons:
 
 -   Only 4 lines of code per endpoint
 -   Adds indirection
--   Param names may vary (id, roomId, etc.)  
-
+-   Param names may vary (id, roomId, etc.)
 
 My take: If you expect more endpoints with ID params, yes - create a generic middleware. If not, the current inline approach is  
  fine.
@@ -1321,3 +1319,62 @@ If you want to proceed, a flexible approach would be:
  router.get('/:roomId/bookings', validateIdParam('roomId'), handler);
 
 Want me to implement this?
+
+# Prompti 22:
+
+Actually enforce that both start_time and end_time must not be in the past
+
+⏺ Update(src/middleware/validation.ts)  
+ ⎿  Added 11 lines  
+ 14 return;  
+ 15 }  
+ 16  
+ 17 + const now = new Date().toISOString();  
+ 18 + if (start_time < now) {  
+ 19 + res.status(400).json({ error: 'start_time cannot be in the past' });  
+ 20 + return;  
+ 21 + }  
+ 22 +  
+ 23 + if (end_time < now) {  
+ 24 + res.status(400).json({ error: 'end_time cannot be in the past' });  
+ 25 + return;  
+ 26 + }  
+ 27 +  
+ 28 next();  
+ 29 }  
+ 30
+
+⏺ Read(src/db/schema.ts)  
+ ⎿  Read 35 lines
+
+⏺ Update(src/db/schema.ts)  
+ ⎿  Added 3 lines, removed 1 line  
+ 20 end_time TEXT NOT NULL,  
+ 21 created_at TEXT DEFAULT CURRENT_TIMESTAMP,  
+ 22 FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,  
+ 23 - CHECK (start_time < end_time)  
+ 23 + CHECK (start_time < end_time),  
+ 24 + CHECK (start_time >= datetime('now')),  
+ 25 + CHECK (end_time >= datetime('now'))  
+ 26 )  
+ 27 `);  
+ 28
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Added past time validation:
+
+Middleware (src/middleware/validation.ts):
+
+-   start_time cannot be in the past
+-   end_time cannot be in the past  
+
+
+Database (src/db/schema.ts):  
+ CHECK (start_time >= datetime('now')),  
+ CHECK (end_time >= datetime('now'))
+
+Note: Database constraints use datetime('now') which is UTC. Make sure your ISO 8601 strings include the Z suffix or timezone  
+ offset for consistent comparison.
