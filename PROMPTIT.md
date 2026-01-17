@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                
+ db.exec(`                                                                                              
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                         `);
+    )                                                                                                       `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1704,3 +1704,44 @@ Deleted the old database file so the table will be recreated on next server star
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 3 commits ahead of origin/main, working tree clean.
+
+# Prompti 30:
+
+❯ Write readme file how to use the api and how to start the dev server
+
+⏺ Write(README.md)  
+ ⎿  Wrote 131 lines to README.md  
+ 1 # Meeting Room Booking API  
+ 2 REST API for booking meeting rooms.  
+ 3 ## Getting Started  
+ 4 ### Prerequisites  
+ 5 - Node.js (v18+)  
+ 6 - npm  
+ … +121 lines (ctrl+o to expand)
+
+⏺ Created README.md with:
+
+-   Installation instructions
+-   How to start dev/production server
+-   All API endpoints with examples
+-   Validation rules and error responses
+-   Database info and environment variables
+
+Want me to commit it?
+
+# Prompti 31:
+
+❯ commit in Finnish
+
+⏺ Bash(git add README.md && git commit -m "dokumentaatio: lisää README API-ohjeilla…)  
+ ⎿  [main 1c99116] dokumentaatio: lisää README API-ohjeilla  
+ 1 file changed, 130 insertions(+)  
+ create mode 100644 README.md
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +7 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean (except PROMPTIT.md).
