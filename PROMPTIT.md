@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                          
+ db.exec(`                                                                                                         
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                   `);
+    )                                                                                                                  `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1277,3 +1277,47 @@ commit these changes in Finnish
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
+
+# Prompti 21:
+
+Does it make sense to move the req.params.id is number check to separate middleware in @src/routes/bookingsRouter.ts  
+ ⎿  Read src/routes/bookingsRouter.ts (33 lines)
+
+⏺ It's borderline. Currently you have 2 endpoints with this check (DELETE /bookings/:id and GET /rooms/:id/bookings).
+
+Pros of middleware:
+
+-   Reusable across endpoints
+-   Consistent error messages
+-   Cleaner route handlers  
+
+
+Cons:
+
+-   Only 4 lines of code per endpoint
+-   Adds indirection
+-   Param names may vary (id, roomId, etc.)  
+
+
+My take: If you expect more endpoints with ID params, yes - create a generic middleware. If not, the current inline approach is  
+ fine.
+
+If you want to proceed, a flexible approach would be:
+
+// Creates a validator for any param name  
+ export function validateIdParam(paramName: string) {  
+ return (req: Request, res: Response, next: NextFunction) => {  
+ const id = parseInt(req.params[paramName], 10);  
+ if (isNaN(id)) {  
+ res.status(400).json({ error: `Invalid ${paramName}` });  
+ return;  
+ }  
+ next();  
+ };  
+ }
+
+// Usage:  
+ router.delete('/:id', validateIdParam('id'), handler);  
+ router.get('/:roomId/bookings', validateIdParam('roomId'), handler);
+
+Want me to implement this?
