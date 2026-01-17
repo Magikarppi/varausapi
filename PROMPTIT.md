@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                        
+ db.exec(`                                                                                                       
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                 `);
+    )                                                                                                                `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1361,16 +1361,16 @@ Actually enforce that both start_time and end_time must not be in the past
  28
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Added past time validation:
 
 Middleware (src/middleware/validation.ts):
 
 -   start_time cannot be in the past
--   end_time cannot be in the past  
-
+-   end_time cannot be in the past
 
 Database (src/db/schema.ts):  
  CHECK (start_time >= datetime('now')),  
@@ -1378,3 +1378,25 @@ Database (src/db/schema.ts):
 
 Note: Database constraints use datetime('now') which is UTC. Make sure your ISO 8601 strings include the Z suffix or timezone  
  offset for consistent comparison.
+
+# Prompti 23:
+
+commit these changes in Finnish
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/schema.ts src/middleware/validation.ts PROMPTIT.md && git commit -m "lisäys: varauksen aikojen  
+ menneisyystarkistus…)  
+ ⎿  [main ef34c57] lisäys: varauksen aikojen menneisyystarkistus  
+ 3 files changed, 77 insertions(+), 7 deletions(-)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
