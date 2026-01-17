@@ -19,7 +19,8 @@ export function initializeDatabase(): void {
       start_time TEXT NOT NULL,
       end_time TEXT NOT NULL,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
+      FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+      CHECK (start_time < end_time)
     )
   `);
 

@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                 
+ db.exec(`                                                                                                               
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                          `);
+    )                                                                                                                        `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -939,3 +939,104 @@ commit the middleware changes (commit message in Finnish, include PROMPTIT.md al
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
+
+# Prompti 14:
+
+Thinking if booking start and end times should be timestamps with timezone in @src/db/schema.ts and type of Date in  
+ @src/types.ts ?  
+ ⎿  Read src/db/schema.ts (34 lines)  
+ ⎿  Read src/types.ts (30 lines)
+
+⏺ Read(src/db/schema.ts)  
+ ⎿  Read 34 lines
+
+⏺ Read(src/types.ts)  
+ ⎿  Read 30 lines
+
+⏺ Good question. Here's my take:
+
+SQLite limitations:  
+ SQLite doesn't have a native TIMESTAMP WITH TIMEZONE type. Options are:
+
+-   TEXT - Store ISO 8601 strings (e.g., 2026-01-17T10:00:00Z) - current approach
+-   INTEGER - Unix timestamps (milliseconds/seconds since epoch)  
+
+
+My recommendation: Keep TEXT in SQLite, keep string in TypeScript
+
+Reasons:
+
+1. ISO 8601 strings with Z suffix (UTC) are already timezone-aware and human-readable in the database
+2. Date objects in TypeScript add serialization complexity - you'd need to convert to/from strings at the API boundary and  
+   database layer anyway
+3. SQLite's datetime functions work well with ISO 8601 text (datetime(), strftime())
+4. Simpler validation - just validate the string format in middleware  
+
+
+If you do want Date in TypeScript:
+
+-   Keep string in the input/output interfaces (API contract)
+-   Only use Date internally if you need date math
+-   Store as ISO 8601 TEXT in SQLite (with UTC/Z suffix)  
+
+
+What I'd actually change:  
+ Add validation in middleware to ensure start_time and end_time are valid ISO 8601 strings and that start_time < end_time.
+
+Would you like me to add that validation instead?
+
+# Prompti 15:
+
+❯ Yes implement that start_time < end_time in middleware. Should it be enforced in the booking INSERT query as well?  
+ @src/db/bookingsDao.ts  
+ ⎿  Read src/db/bookingsDao.ts (17 lines)
+
+⏺ Yes, defense in depth is good practice - validate in middleware for user-friendly errors, and add a CHECK constraint in the  
+ database as a safety net.
+
+⏺ Read(src/middleware/validation.ts)  
+ ⎿  Read 25 lines
+
+⏺ Update(src/middleware/validation.ts)  
+ ⎿  Added 5 lines  
+ 9 return;  
+ 10 }  
+ 11  
+ 12 + if (start_time >= end_time) {  
+ 13 + res.status(400).json({ error: 'start_time must be before end_time' });  
+ 14 + return;  
+ 15 + }  
+ 16 +  
+ 17 next();  
+ 18 }  
+ 19
+
+⏺ Update(src/db/schema.ts)  
+ ⎿  Added 2 lines, removed 1 line  
+ 19 start_time TEXT NOT NULL,  
+ 20 end_time TEXT NOT NULL,  
+ 21 created_at TEXT DEFAULT CURRENT_TIMESTAMP,  
+ 22 - FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE  
+ 22 + FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,  
+ 23 + CHECK (start_time < end_time)  
+ 24 )  
+ 25 `);  
+ 26
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Implemented in both places:
+
+Middleware (src/middleware/validation.ts:11-14):  
+ if (start_time >= end_time) {  
+ res.status(400).json({ error: 'start_time must be before end_time' });  
+ return;  
+ }
+
+Database (src/db/schema.ts):  
+ CHECK (start_time < end_time)
+
+Note: The CHECK constraint only applies to new databases. For the existing data/database.db, you'd need to delete it and restart  
+ the server to recreate the table with the constraint (or run a migration to recreate the table).

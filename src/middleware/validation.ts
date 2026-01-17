@@ -9,6 +9,11 @@ export function validateCreateBooking(req: Request, res: Response, next: NextFun
     return;
   }
 
+  if (start_time >= end_time) {
+    res.status(400).json({ error: 'start_time must be before end_time' });
+    return;
+  }
+
   next();
 }
 
