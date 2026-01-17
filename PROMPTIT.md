@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                            
+ db.exec(`                                                                                           
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                     `);
+    )                                                                                                    `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1942,8 +1942,9 @@ Tietokantavirheitä ei käsitellä try-catch:lla. Jos esim. createBooking() heit
  22 });
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Added error handling:
 
@@ -1952,15 +1953,37 @@ Route handlers - try-catch around all database operations:
 -   bookingsRouter.ts - POST and DELETE endpoints
 -   roomsRouter.ts - POST and GET endpoints
 -   Returns 500 with user-friendly error message
--   Logs detailed error to console  
-
+-   Logs detailed error to console
 
 Global error handler (src/middleware/errorHandler.ts):
 
 -   Catches any unhandled errors
 -   Returns 500 Internal server error
--   Added to index.ts as last middleware  
-
+-   Added to index.ts as last middleware
 
 Example response on DB error:  
  { "error": "Failed to create booking" }
+
+# Prompti 34:
+
+commit in Finnish
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +19 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/index.ts src/routes/bookingsRouter.ts src/routes/roomsRouter.ts src/middleware/errorHandler.ts PROMPTIT.md && git commit
+-m "lisäys: virheenkäsittel…)  
+ ⎿  [main 9264ecf] lisäys: virheenkäsittely reitteihin ja globaali virheenkäsittelijä  
+ 5 files changed, 196 insertions(+), 18 deletions(-)  
+ create mode 100644 src/middleware/errorHandler.ts
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 2 commits.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 2 commits ahead of origin/main, working tree clean.
