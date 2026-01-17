@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                       
+ db.exec(`                                                                                                     
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                `);
+    )                                                                                                              `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1400,3 +1400,126 @@ commit these changes in Finnish
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
+
+# Prompti 24:
+
+I tried to clear the db by running rm data/database.db\* and starting the server again I get:  
+ /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/better-sqlite3/lib/methods/wrappers.js:5 return  
+ this[cppdb].prepare(sql, this, false); ^ SqliteError: no such table: bookings at Database.prepare  
+ (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21) at  
+ Object.<anonymous> (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db/bookingsDao.ts:4:26) at  
+ Module.\_compile (node:internal/modules/cjs/loader:1740:14) at Module.m.\_compile  
+ (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/ts-node/src/index.ts:1618:23) at  
+ node:internal/modules/cjs/loader:1905:10 at Object.require.extensions.<computed> [as .ts]  
+ (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/ts-node/src/index.ts:1621:12) at Module.load  
+ (node:internal/modules/cjs/loader:1474:32) at Function.\_load (node:internal/modules/cjs/loader:1286:12) at  
+ TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:234:24) {  
+ code: 'SQLITE_ERROR'
+
+⏺ The issue is that db.prepare() in the DAOs runs at module import time, before initializeDatabase() is called. The prepared  
+ statements try to reference tables that don't exist yet.
+
+Let me fix this by initializing the database in the connection file.
+
+⏺ Read(src/db/connection.ts)  
+ ⎿  Read 11 lines
+
+⏺ Read(src/db/schema.ts)  
+ ⎿  Read 37 lines
+
+⏺ The cleanest fix is to run schema initialization directly in connection.ts before the DAOs load. I'll inline the schema setup  
+ there.
+
+⏺ Write(src/db/connection.ts)  
+ ⎿  Added 34 lines  
+ 7  
+ 8 db.pragma('journal_mode = WAL');  
+ 9  
+ 10 +// Initialize tables immediately so DAOs can prepare statements  
+ 11 +db.exec(`                                                                                                                 
+      12 +  CREATE TABLE IF NOT EXISTS rooms (                                                                                      
+      13 +    id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                 
+      14 +    name TEXT NOT NULL UNIQUE,                                                                                            
+      15 +    capacity INTEGER,                                                                                                     
+      16 +    created_at TEXT DEFAULT CURRENT_TIMESTAMP                                                                             
+      17 +  )                                                                                                                       
+      18 +`);  
+ 19 +  
+ 20 +db.exec(`                                                                                                                 
+      21 +  CREATE TABLE IF NOT EXISTS bookings (                                                                                   
+      22 +    id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                 
+      23 +    room_id INTEGER NOT NULL,                                                                                             
+      24 +    title TEXT NOT NULL,                                                                                                  
+      25 +    booked_by TEXT NOT NULL,                                                                                              
+      26 +    start_time TEXT NOT NULL,                                                                                             
+      27 +    end_time TEXT NOT NULL,                                                                                               
+      28 +    created_at TEXT DEFAULT CURRENT_TIMESTAMP,                                                                            
+      29 +    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,                                                         
+      30 +    CHECK (start_time < end_time),                                                                                        
+      31 +    CHECK (start_time >= datetime('now')),                                                                                
+      32 +    CHECK (end_time >= datetime('now'))                                                                                   
+      33 +  )                                                                                                                       
+      34 +`);  
+ 35 +  
+ 36 +db.exec(`                                                                                                                 
+      37 +  CREATE INDEX IF NOT EXISTS idx_bookings_room_id ON bookings(room_id)                                                    
+      38 +`);  
+ 39 +  
+ 40 +db.exec(`                                                                                                                 
+      41 +  CREATE INDEX IF NOT EXISTS idx_bookings_times ON bookings(start_time, end_time)                                         
+      42 +`);  
+ 43 +  
+ 44 export default db;
+
+⏺ Now let me remove the duplicate schema.ts and update the exports.
+
+⏺ Bash(rm /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db/schema.ts)  
+ ⎿  (No content)
+
+⏺ Read(src/db/index.ts)  
+ ⎿  Read 5 lines
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 23 lines
+
+⏺ Write(src/db/index.ts)  
+ ⎿  Removed 1 line  
+ 1 export { default as db } from './connection';  
+ 2 -export { initializeDatabase } from './schema';  
+ 2 export _ from './bookingsDao';  
+ 3 export _ from './roomsDao';
+
+⏺ Write(src/index.ts)  
+ ⎿  Removed 3 lines  
+ 1 import express, { Request, Response } from 'express';  
+ 2 -import { initializeDatabase } from './db';  
+ 2 import roomsRouter from './routes/roomsRouter';  
+ 3 import bookingsRouter from './routes/bookingsRouter';  
+ 4  
+ 6 -initializeDatabase();  
+ 7 -  
+ 5 const app = express();  
+ 6 const PORT = process.env.PORT || 3000;  
+ 7
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
+
+⏺ Bash(rm -f /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/data/database.db\* && npm run dev & timeout: 15s  
+ sleep 3 && curl -s http://localhost:3000/ && pkill -f "ts-n…)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 dev
+
+> nodemon --watch src --ext ts --exec ts-node src/index.ts  
+>  … +9 lines (ctrl+o to expand)
+
+⏺ Fixed. The issue was that db.prepare() in DAOs ran at import time, before tables were created.
+
+Changes:
+
+-   Moved schema initialization directly into src/db/connection.ts (runs immediately when db is created)
+-   Removed src/db/schema.ts (no longer needed)
+-   Removed initializeDatabase() call from src/index.ts
+
+Now tables are created before any DAO modules try to prepare statements. Tested with fresh database - server starts correctly.

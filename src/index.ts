@@ -1,9 +1,6 @@
 import express, { Request, Response } from 'express';
-import { initializeDatabase } from './db';
 import roomsRouter from './routes/roomsRouter';
 import bookingsRouter from './routes/bookingsRouter';
-
-initializeDatabase();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
