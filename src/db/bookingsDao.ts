@@ -31,3 +31,16 @@ const selectBookingsByRoom = db.prepare(`
 export function getBookingsByRoom(roomId: number): Booking[] {
   return selectBookingsByRoom.all(roomId) as Booking[];
 }
+
+const selectOverlappingBooking = db.prepare(`
+  SELECT id FROM bookings
+  WHERE room_id = @room_id
+    AND start_time < @end_time
+    AND end_time > @start_time
+  LIMIT 1
+`);
+
+export function hasOverlappingBooking(roomId: number, startTime: string, endTime: string): boolean {
+  const result = selectOverlappingBooking.get({ room_id: roomId, start_time: startTime, end_time: endTime });
+  return result !== undefined;
+}

@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                    
+ db.exec(`                                                                                                   
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                             `);
+    )                                                                                                            `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1547,3 +1547,72 @@ alustus ennen DAO-moduulien lataus…)
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 3 commits ahead of origin/main, working tree clean.
+
+# Prompti 26:
+
+❯ add check to prevent overlapping bookings
+
+⏺ Read(src/db/bookingsDao.ts)  
+ ⎿  Read 34 lines
+
+⏺ Update(src/db/bookingsDao.ts)  
+ ⎿  Added 13 lines  
+ 31 export function getBookingsByRoom(roomId: number): Booking[] {  
+ 32 return selectBookingsByRoom.all(roomId) as Booking[];  
+ 33 }  
+ 34 +  
+ 35 +const selectOverlappingBooking = db.prepare(`                                                                                     
+      36 +  SELECT id FROM bookings                                                                                                         
+      37 +  WHERE room_id = @room_id                                                                                                        
+      38 +    AND start_time < @end_time                                                                                                    
+      39 +    AND end_time > @start_time                                                                                                    
+      40 +  LIMIT 1                                                                                                                         
+      41 +`);  
+ 42 +  
+ 43 +export function hasOverlappingBooking(roomId: number, startTime: string, endTime: string): boolean {  
+ 44 + const result = selectOverlappingBooking.get({ room_id: roomId, start_time: startTime, end_time: endTime });  
+ 45 + return result !== undefined;  
+ 46 +}
+
+⏺ Read(src/middleware/validation.ts)  
+ ⎿  Read 41 lines
+
+⏺ Update(src/middleware/validation.ts)  
+ ⎿  Added 1 line  
+ 1 import { Request, Response, NextFunction } from 'express';  
+ 2 import { CreateBookingInput, CreateRoomInput } from '../types';  
+ 3 +import { hasOverlappingBooking } from '../db';  
+ 4  
+ 5 export function validateCreateBooking(req: Request, res: Response, next: NextFunction): void {  
+ 6 const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;
+
+⏺ Update(src/middleware/validation.ts)  
+ ⎿  Added 5 lines  
+ 26 return;  
+ 27 }  
+ 28  
+ 29 + if (hasOverlappingBooking(room_id, start_time, end_time)) {  
+ 30 + res.status(409).json({ error: 'Booking overlaps with an existing booking' });  
+ 31 + return;  
+ 32 + }  
+ 33 +  
+ 34 next();  
+ 35 }  
+ 36
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Added overlap check:
+
+DAO (src/db/bookingsDao.ts):  
+ export function hasOverlappingBooking(roomId: number, startTime: string, endTime: string): boolean  
+ Checks if any booking for the room overlaps with the given time range.
+
+Middleware (src/middleware/validation.ts):
+
+-   Returns 409 Conflict with "Booking overlaps with an existing booking" if overlap detected  
+
+
+Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.start_time
