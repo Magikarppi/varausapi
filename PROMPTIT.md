@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                   
+ db.exec(`                                                                                                                 
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                            `);
+    )                                                                                                                          `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -892,8 +892,9 @@ refactor request body checks in @src/routes/bookingsRouter.ts and in @src/routes
  12 });
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Created validation middleware under src/middleware/:
 
@@ -909,3 +910,32 @@ Changes:
 
 -   src/middleware/validation.ts - Contains validateCreateBooking and validateCreateRoom middleware functions
 -   Both routers now use middleware in route definition: router.post('/', validateCreateBooking, handler)
+
+# Prompti 13:
+
+commit the middleware changes (commit message in Finnish, include PROMPTIT.md also)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git diff)  
+ ⎿  diff --git a/PROMPTIT.md b/PROMPTIT.md  
+ index 8f3fc14..fa17ee2 100644  
+ --- a/PROMPTIT.md  
+ … +164 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/middleware/ src/routes/bookingsRouter.ts src/routes/roomsRouter.ts PROMPTIT.md && git commit -m "refaktorointi:  
+ siirrä validointi middleware-funktio…)  
+ ⎿  [main 3c63f9e] refaktorointi: siirrä validointi middleware-funktioihin  
+ 4 files changed, 118 insertions(+), 16 deletions(-)  
+ create mode 100644 src/middleware/validation.ts
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
