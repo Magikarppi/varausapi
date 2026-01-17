@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                           
+ db.exec(`                                                                                          
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                    `);
+    )                                                                                                   `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1987,3 +1987,53 @@ commit in Finnish
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 2 commits ahead of origin/main, working tree clean.
+
+# Prompti 35:
+
+❯ How does the global error handler in @src/middleware/errorHandler.ts work in practice?  
+ ⎿  Read src/middleware/errorHandler.ts (12 lines)
+
+⏺ The global error handler catches errors that are:
+
+1. Thrown in async middleware with next(error) - If you call next(error) in a route/middleware, Express passes it to the error handler
+2. Thrown synchronously - If code throws outside a try-catch  
+
+
+In practice with our current code:
+
+It's actually not being triggered because:
+
+-   All routes have their own try-catch blocks
+-   Errors are caught and handled locally with res.status(500).json(...)  
+
+
+When it would trigger:
+
+// Sync throw without try-catch  
+ router.get('/crash', (req, res) => {  
+ throw new Error('boom'); // → errorHandler catches this  
+ });
+
+// Async with next(error)  
+ router.get('/async', async (req, res, next) => {  
+ try {  
+ await something();  
+ } catch (error) {  
+ next(error); // → errorHandler catches this  
+ }  
+ });
+
+What it doesn't catch:
+
+-   Errors inside try-catch (handled locally)
+-   Unhandled promise rejections (need express-async-errors or manual wrapping)  
+
+
+Options:
+
+1. Keep as safety net - It's harmless, catches edge cases
+2. Remove route try-catches - Use only global handler (less duplication)
+3. Remove global handler - Since routes handle errors themselves  
+
+
+Which approach do you prefer?
