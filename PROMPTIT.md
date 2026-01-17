@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                 
+ db.exec(`                                                                                                
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                          `);
+    )                                                                                                         `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1674,10 +1674,33 @@ Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.st
  33
 
 ⏺ Bash(rm -f /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/data/database.db\* && npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Fixed. Removed the datetime('now') CHECK constraints from the database - SQLite doesn't allow non-deterministic functions in CHECK  
  constraints. The middleware already handles past time validation, so the database only keeps CHECK (start_time < end_time).
 
 Deleted the old database file so the table will be recreated on next server start.
+
+# Prompti 29:
+
+❯ commit this fix in Finnish
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 2 commits.  
+ (use "git push" to publish your local commits)  
+ … +9 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/connection.ts && git commit -m "korjaus: poista datetime('now') CHECK-rajoitteet…)  
+ ⎿  [main bb5977b] korjaus: poista datetime('now') CHECK-rajoitteet  
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 3 commits.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 3 commits ahead of origin/main, working tree clean.
