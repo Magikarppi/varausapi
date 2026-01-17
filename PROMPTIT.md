@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                           
+ db.exec(`                                                                                                          
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                    `);
+    )                                                                                                                   `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1237,8 +1237,9 @@ add endpoint for viewing all bookings for a room
  26 export default router;
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Added endpoint to view room bookings:
 
@@ -1250,8 +1251,29 @@ Endpoint (src/routes/roomsRouter.ts):
 
 -   GET /rooms/:id/bookings
 -   Returns array of bookings for the room
--   Returns 400 if invalid room id  
-
+-   Returns 400 if invalid room id
 
 Example:  
  curl http://localhost:3000/rooms/1/bookings
+
+# Prompti 20:
+
+commit these changes in Finnish
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/bookingsDao.ts src/routes/roomsRouter.ts PROMPTIT.md && git commit -m "lisäys: huoneen varausten  
+ haku-endpoint…)  
+ ⎿  [main 9e6d5fc] lisäys: huoneen varausten haku-endpoint  
+ 3 files changed, 95 insertions(+), 3 deletions(-)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
