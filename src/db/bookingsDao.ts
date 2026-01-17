@@ -14,3 +14,12 @@ export function createBooking(input: CreateBookingInput): Booking {
     created_at: new Date().toISOString(),
   };
 }
+
+const deleteBookingById = db.prepare(`
+  DELETE FROM bookings WHERE id = ?
+`);
+
+export function deleteBooking(id: number): boolean {
+  const result = deleteBookingById.run(id);
+  return result.changes > 0;
+}

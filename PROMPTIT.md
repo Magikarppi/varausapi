@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                              
+ db.exec(`                                                                                                             
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                       `);
+    )                                                                                                                      `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1060,3 +1060,105 @@ commit these changes in Finnish
  … +2 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
+
+# Prompti 17:
+
+add endpoint, dao and query for deleting a booking
+
+⏺ Read(src/db/bookingsDao.ts)  
+ ⎿  Read 17 lines
+
+⏺ Read(src/routes/bookingsRouter.ts)  
+ ⎿  Read 15 lines
+
+⏺ Update(src/db/bookingsDao.ts)  
+ ⎿  Added 9 lines  
+ 14 created_at: new Date().toISOString(),  
+ 15 };  
+ 16 }  
+ 17 +  
+ 18 +const deleteBookingById = db.prepare(`                                                                                    
+      19 +  DELETE FROM bookings WHERE id = ?                                                                                       
+      20 +`);  
+ 21 +  
+ 22 +export function deleteBooking(id: number): boolean {  
+ 23 + const result = deleteBookingById.run(id);  
+ 24 + return result.changes > 0;  
+ 25 +}
+
+⏺ Update(src/routes/bookingsRouter.ts)  
+ ⎿  Added 1 line, removed 1 line  
+ 1 import { Router, Request, Response } from 'express';  
+ 2 -import { createBooking } from '../db';  
+ 2 +import { createBooking, deleteBooking } from '../db';  
+ 3 import { CreateBookingInput } from '../types';  
+ 4 import { validateCreateBooking } from '../middleware/validation';  
+ 5
+
+⏺ Update(src/routes/bookingsRouter.ts)  
+ ⎿  Added 18 lines  
+ 11 res.status(201).json(booking);  
+ 12 });  
+ 13  
+ 14 +router.delete('/:id', (req: Request, res: Response) => {  
+ 15 + const id = parseInt(req.params.id, 10);  
+ 16 +  
+ 17 + if (isNaN(id)) {  
+ 18 + res.status(400).json({ error: 'Invalid booking id' });  
+ 19 + return;  
+ 20 + }  
+ 21 +  
+ 22 + const deleted = deleteBooking(id);  
+ 23 +  
+ 24 + if (!deleted) {  
+ 25 + res.status(404).json({ error: 'Booking not found' });  
+ 26 + return;  
+ 27 + }  
+ 28 +  
+ 29 + res.status(204).send();  
+ 30 +});  
+ 31 +  
+ 32 export default router;
+
+⏺ Bash(npm run build)  
+ ⎿  Error: Exit code 2
+
+     > vincit-rising-star-2026-ennakko@1.0.0 build
+     > tsc
+
+     src/routes/bookingsRouter.ts(15,23): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type
+     'string'.
+       Type 'string[]' is not assignable to type 'string'.
+
+
+⏺ Update(src/routes/bookingsRouter.ts)  
+ ⎿  Added 1 line, removed 1 line  
+ 11 res.status(201).json(booking);  
+ 12 });  
+ 13  
+ 14 -router.delete('/:id', (req: Request, res: Response) => {  
+ 14 +router.delete('/:id', (req: Request<{ id: string }>, res: Response) => {  
+ 15 const id = parseInt(req.params.id, 10);  
+ 16  
+ 17 if (isNaN(id)) {
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Added booking deletion:
+
+DAO (src/db/bookingsDao.ts):  
+ export function deleteBooking(id: number): boolean  
+ Returns true if deleted, false if not found.
+
+Endpoint (src/routes/bookingsRouter.ts):
+
+-   DELETE /bookings/:id
+-   Returns 204 No Content on success
+-   Returns 404 if booking not found
+-   Returns 400 if invalid id  
+
+
+Example:  
+ curl -X DELETE http://localhost:3000/bookings/1
