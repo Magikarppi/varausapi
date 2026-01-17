@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                   
+ db.exec(`                                                                                                  
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                            `);
+    )                                                                                                           `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1601,8 +1601,9 @@ alustus ennen DAO-moduulien lataus…)
  36
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Added overlap check:
 
@@ -1612,7 +1613,27 @@ DAO (src/db/bookingsDao.ts):
 
 Middleware (src/middleware/validation.ts):
 
--   Returns 409 Conflict with "Booking overlaps with an existing booking" if overlap detected  
-
+-   Returns 409 Conflict with "Booking overlaps with an existing booking" if overlap detected
 
 Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.start_time
+
+# Prompti 27:
+
+❯ commit in Finnish
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/bookingsDao.ts src/middleware/validation.ts PROMPTIT.md && git commit -m "lisäys: päällekkäisten varausten esto…)  
+ ⎿  [main d6a247a] lisäys: päällekkäisten varausten esto  
+ 3 files changed, 90 insertions(+), 2 deletions(-)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
