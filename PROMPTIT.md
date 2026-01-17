@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                     
+ db.exec(`                                                                                                    
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                              `);
+    )                                                                                                             `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1523,3 +1523,27 @@ Changes:
 -   Removed initializeDatabase() call from src/index.ts
 
 Now tables are created before any DAO modules try to prepare statements. Tested with fresh database - server starts correctly.
+
+# Prompti 25:
+
+❯ commit
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 2 commits.  
+ (use "git push" to publish your local commits)  
+ … +17 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/connection.ts src/db/index.ts src/db/schema.ts src/index.ts PROMPTIT.md && git commit -m "korjaus: tietokannan
+alustus ennen DAO-moduulien lataus…)  
+ ⎿  [main 7fba9e1] korjaus: tietokannan alustus ennen DAO-moduulien latausta  
+ 5 files changed, 159 insertions(+), 42 deletions(-)  
+ delete mode 100644 src/db/schema.ts
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 3 commits.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 3 commits ahead of origin/main, working tree clean.
