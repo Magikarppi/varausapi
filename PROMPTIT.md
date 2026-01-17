@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                    
+ db.exec(`                                                                                                                   
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                             `);
+    )                                                                                                                            `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -821,3 +821,91 @@ commit the changes. make the commit message in Finnish
 
 ⏺ Committed successfully. Branch is now 3 commits ahead of origin/main. Only PROMPTIT.md remains modified (not included in this  
  commit).
+
+# Prompti 12:
+
+refactor request body checks in @src/routes/bookingsRouter.ts and in @src/routes/roomsRouter.ts to middleware functions under  
+ routes or src (whichever makes more sense)  
+ ⎿  Read src/routes/bookingsRouter.ts (20 lines)  
+ ⎿  Read src/routes/roomsRouter.ts (20 lines)
+
+⏺ Read(src/routes/bookingsRouter.ts)  
+ ⎿  Read 20 lines
+
+⏺ Read(src/routes/roomsRouter.ts)  
+ ⎿  Read 20 lines
+
+⏺ Write(src/middleware/validation.ts)  
+ ⎿  Wrote 25 lines to src/middleware/validation.ts  
+ 1 import { Request, Response, NextFunction } from 'express';  
+ 2 import { CreateBookingInput, CreateRoomInput } from '../types';  
+ 3 export function validateCreateBooking(req: Request, res: Response, next: NextFunction): void {  
+ 4 const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;  
+ 5 if (!room_id || !title || !booked_by || !start_time || !end_time) {  
+ 6 res.status(400).json({ error: 'Missing required fields' });  
+ 7 return;  
+ 8 }  
+ … +15 lines (ctrl+o to expand)
+
+⏺ Write(src/routes/bookingsRouter.ts)  
+ ⎿  Added 2 lines, removed 7 lines  
+ 1 import { Router, Request, Response } from 'express';  
+ 2 import { createBooking } from '../db';  
+ 3 import { CreateBookingInput } from '../types';  
+ 4 +import { validateCreateBooking } from '../middleware/validation';  
+ 5  
+ 6 const router = Router();  
+ 7  
+ 7 -router.post('/', (req: Request, res: Response) => {  
+ 8 +router.post('/', validateCreateBooking, (req: Request, res: Response) => {  
+ 9 const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookingInput;  
+ 9 -  
+ 10 - if (!room_id || !title || !booked_by || !start_time || !end_time) {  
+ 11 - res.status(400).json({ error: 'Missing required fields' });  
+ 12 - return;  
+ 13 - }  
+ 14 -  
+ 10 const booking = createBooking({ room_id, title, booked_by, start_time, end_time });  
+ 11 res.status(201).json(booking);  
+ 12 });
+
+⏺ Write(src/routes/roomsRouter.ts)  
+ ⎿  Added 2 lines, removed 7 lines  
+ 1 import { Router, Request, Response } from 'express';  
+ 2 import { createRoom } from '../db';  
+ 3 import { CreateRoomInput } from '../types';  
+ 4 +import { validateCreateRoom } from '../middleware/validation';  
+ 5  
+ 6 const router = Router();  
+ 7  
+ 7 -router.post('/', (req: Request, res: Response) => {  
+ 8 +router.post('/', validateCreateRoom, (req: Request, res: Response) => {  
+ 9 const { name, capacity } = req.body as CreateRoomInput;  
+ 9 -  
+ 10 - if (!name) {  
+ 11 - res.status(400).json({ error: 'Missing required field: name' });  
+ 12 - return;  
+ 13 - }  
+ 14 -  
+ 10 const room = createRoom({ name, capacity });  
+ 11 res.status(201).json(room);  
+ 12 });
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Created validation middleware under src/middleware/:
+
+New structure:  
+ src/  
+ ├── middleware/  
+ │ └── validation.ts # validateCreateBooking, validateCreateRoom  
+ ├── routes/  
+ │ ├── bookingsRouter.ts # Uses validateCreateBooking middleware  
+ │ └── roomsRouter.ts # Uses validateCreateRoom middleware
+
+Changes:
+
+-   src/middleware/validation.ts - Contains validateCreateBooking and validateCreateRoom middleware functions
+-   Both routers now use middleware in route definition: router.post('/', validateCreateBooking, handler)
