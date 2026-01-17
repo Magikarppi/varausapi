@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { initializeDatabase, createBooking, CreateBookingInput } from './db';
+import { initializeDatabase, createBooking, CreateBookingInput, createRoom, CreateRoomInput } from './db';
 
 initializeDatabase();
 
@@ -10,6 +10,18 @@ app.use(express.json());
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, World!' });
+});
+
+app.post('/rooms', (req: Request, res: Response) => {
+  const { name, capacity } = req.body as CreateRoomInput;
+
+  if (!name) {
+    res.status(400).json({ error: 'Missing required field: name' });
+    return;
+  }
+
+  const room = createRoom({ name, capacity });
+  res.status(201).json(room);
 });
 
 app.post('/bookings', (req: Request, res: Response) => {

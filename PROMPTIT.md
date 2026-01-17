@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                                        
+ db.exec(`                                                                                                                       
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                                 `);
+    )                                                                                                                                `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -534,3 +534,91 @@ give me a few useful select queries to run against the db in sqlite terminal for
  );
 
 Run with: sqlite3 data/database.db then paste the query.
+
+# Prompti 9:
+
+add endpoint, dao and query for adding a room
+
+⏺ Write(src/db/roomsDao.ts)  
+ ⎿  Wrote 32 lines to src/db/roomsDao.ts  
+ 1 import db from './connection';  
+ 2 export interface Room {  
+ 3 id: number;  
+ 4 name: string;  
+ 5 capacity: number | null;  
+ 6 created_at: string;  
+ 7 }  
+ 8 export interface CreateRoomInput {  
+ … +22 lines (ctrl+o to expand)
+
+⏺ Update(src/db/index.ts)  
+ ⎿  Added 1 line  
+ 1 export { default as db } from './connection';  
+ 2 export { initializeDatabase } from './schema';  
+ 3 export _ from './bookingsDao';  
+ 4 +export _ from './roomsDao';
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 30 lines
+
+⏺ Update(src/index.ts)  
+ ⎿  Added 1 line, removed 1 line  
+ 1 import express, { Request, Response } from 'express';  
+ 2 -import { initializeDatabase, createBooking, CreateBookingInput } from './db';  
+ 2 +import { initializeDatabase, createBooking, CreateBookingInput, createRoom, CreateRoomI  
+ +nput } from './db';  
+ 3  
+ 4 initializeDatabase();  
+ 5
+
+⏺ Update(src/index.ts)  
+ ⎿  Added 12 lines  
+ 12 res.json({ message: 'Hello, World!' });  
+ 13 });  
+ 14  
+ 15 +app.post('/rooms', (req: Request, res: Response) => {  
+ 16 + const { name, capacity } = req.body as CreateRoomInput;  
+ 17 +  
+ 18 + if (!name) {  
+ 19 + res.status(400).json({ error: 'Missing required field: name' });  
+ 20 + return;  
+ 21 + }  
+ 22 +  
+ 23 + const room = createRoom({ name, capacity });  
+ 24 + res.status(201).json(room);  
+ 25 +});  
+ 26 +  
+ 27 app.post('/bookings', (req: Request, res: Response) => {  
+ 28 const { room_id, title, booked_by, start_time, end_time } = req.body as CreateBookin  
+ gInput;  
+ 29
+
+⏺ Bash(npm run build)  
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Added the room creation feature:
+
+Created src/db/roomsDao.ts:
+
+-   Room and CreateRoomInput interfaces
+-   createRoom() function using a prepared statement  
+
+
+Updated src/db/index.ts:
+
+-   Exports the rooms DAO  
+
+
+Updated src/index.ts:
+
+-   POST /rooms endpoint that accepts:
+    -   name (string, required)
+    -   capacity (number, optional)
+-   Returns 201 with the created room, or 400 if name is missing  
+
+
+Example request:  
+ curl -X POST http://localhost:3000/rooms \  
+ -H "Content-Type: application/json" \  
+ -d '{"name": "Conference Room A", "capacity": 10}'
