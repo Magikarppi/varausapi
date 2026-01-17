@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                                             
+ db.exec(`                                                                                                            
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                                      `);
+    )                                                                                                                     `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1130,7 +1130,6 @@ add endpoint, dao and query for deleting a booking
      'string'.
        Type 'string[]' is not assignable to type 'string'.
 
-
 ⏺ Update(src/routes/bookingsRouter.ts)  
  ⎿  Added 1 line, removed 1 line  
  11 res.status(201).json(booking);  
@@ -1143,8 +1142,9 @@ add endpoint, dao and query for deleting a booking
  17 if (isNaN(id)) {
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Added booking deletion:
 
@@ -1157,8 +1157,29 @@ Endpoint (src/routes/bookingsRouter.ts):
 -   DELETE /bookings/:id
 -   Returns 204 No Content on success
 -   Returns 404 if booking not found
--   Returns 400 if invalid id  
-
+-   Returns 400 if invalid id
 
 Example:  
  curl -X DELETE http://localhost:3000/bookings/1
+
+# Prompti 18:
+
+commit delete booking changes in Finnish
+
+⏺ Bash(git status && git diff --stat)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +12 lines (ctrl+o to expand)
+
+⏺ Bash(git add src/db/bookingsDao.ts src/routes/bookingsRouter.ts PROMPTIT.md && git commit -m "lisäys: varauksen poisto-endpoint,  
+ DAO ja query…)  
+ ⎿  [main 6cddc16] lisäys: varauksen poisto-endpoint, DAO ja query  
+ 3 files changed, 132 insertions(+), 3 deletions(-)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
