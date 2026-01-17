@@ -177,11 +177,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                              
+ db.exec(`                                                                                             
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                       `);
+    )                                                                                                      `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -1745,3 +1745,78 @@ Want me to commit it?
  … +7 lines (ctrl+o to expand)
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean (except PROMPTIT.md).
+
+# Prompti 32:
+
+❯ Does the API and code follow these instructions: Tehtäväsi on toteuttaa yksinkertainen kokoushuoneiden varausrajapinta (API).  
+ Palvelun tulee tarjota käyttäjille seuraavat toiminnot:  
+ ● Varauksen luonti: Varaa huone tietylle aikavälille.  
+ ● Varauksen peruutus: Poista varaus.  
+ ● Varausten katselu: Listaa kaikki tietyn huoneen varaukset.  
+ Toimintalogiikka (business rules):  
+ ● Varaukset eivät saa mennä päällekkäin (kaksi henkilöä ei voi varata samaa huonetta  
+ samaan aikaan).  
+ ● Varaukset eivät voi sijoittua menneisyyteen.  
+ ● Aloitusajan täytyy olla ennen lopetusaikaa.  
+ Tekniset reunaehdot:  
+ ● Voit käyttää mitä tahansa yleistä ohjelmointikieltä, joka on sinulle tuttu (Python,  
+ JavaScript/TypeScript, Java, C# tai vastaava).  
+ ● Voit käyttää muistinvaraista tietokantaa (in-memory database), jotta ympäristön  
+ pystytys pysyy yksinkertaisena (esim. PostgreSQL tai MySQL-asennusta ei vaadita). Kiinnitä huomiota myös ● Logiikkavirheet  
+ ● Koodin laatu ja luettavuus  
+ ● Virheenkäsittely  
+ ● Rakenne
+
+⏺ Let me verify the implementation against the requirements.
+
+⏺ Read(src/middleware/validation.ts)  
+ ⎿  Read 47 lines
+
+⏺ Read(src/routes/bookingsRouter.ts)  
+ ⎿  Read 33 lines
+
+⏺ Read(src/routes/roomsRouter.ts)  
+ ⎿  Read 27 lines
+
+⏺ Kyllä, API toteuttaa kaikki vaatimukset:
+
+Toiminnot ✅  
+ ┌────────────────────┬─────────────────────────┐  
+ │ Vaatimus │ Toteutus │  
+ ├────────────────────┼─────────────────────────┤  
+ │ Varauksen luonti │ POST /bookings │  
+ ├────────────────────┼─────────────────────────┤  
+ │ Varauksen peruutus │ DELETE /bookings/:id │  
+ ├────────────────────┼─────────────────────────┤  
+ │ Varausten katselu │ GET /rooms/:id/bookings │  
+ └────────────────────┴─────────────────────────┘  
+ Toimintalogiikka ✅  
+ ┌─────────────────────────┬──────────────────────────────────────────┐  
+ │ Sääntö │ Toteutus │  
+ ├─────────────────────────┼──────────────────────────────────────────┤  
+ │ Päällekkäisyyskielto │ hasOverlappingBooking() → 409 Conflict │  
+ ├─────────────────────────┼──────────────────────────────────────────┤  
+ │ Ei menneisyyteen │ start_time < now ja end_time < now → 400 │  
+ ├─────────────────────────┼──────────────────────────────────────────┤  
+ │ Aloitus ennen lopetusta │ start_time >= end_time → 400 │  
+ └─────────────────────────┴──────────────────────────────────────────┘  
+ Tekniset reunaehdot ✅
+
+-   TypeScript (tuttu kieli)
+-   SQLite (yksinkertainen, ei asennusta)  
+
+
+Laatu ✅  
+ ┌──────────────────┬───────────────────────────────────────────────────────┐  
+ │ Aspekti │ Arvio │  
+ ├──────────────────┼───────────────────────────────────────────────────────┤  
+ │ Koodin rakenne │ Selkeä: routes/, middleware/, db/, types.ts │  
+ ├──────────────────┼───────────────────────────────────────────────────────┤  
+ │ Luettavuus │ Hyvä: pienet funktiot, kuvaavat nimet │  
+ ├──────────────────┼───────────────────────────────────────────────────────┤  
+ │ Virheenkäsittely │ HTTP-statuskoodit (400, 404, 409) ja virheilmoitukset │  
+ └──────────────────┴───────────────────────────────────────────────────────┘  
+ Yksi puute
+
+Tietokantavirheitä ei käsitellä try-catch:lla. Jos esim. createBooking() heittää virheen, palvelin kaatuu. Haluatko että lisään  
+ virheenkäsittelyn?
