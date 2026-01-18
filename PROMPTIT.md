@@ -185,11 +185,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                 
+ db.exec(`                                                                                
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                          `);
+    )                                                                                         `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -2308,7 +2308,6 @@ Changes made:
      54 packages are looking for funding
      … +8 lines (ctrl+o to expand)
 
-
 ⏺ Write(vitest.config.ts)  
  ⎿  Wrote 16 lines to vitest.config.ts  
  1 import { defineConfig } from 'vitest/config';  
@@ -2461,17 +2460,19 @@ Changes made:
  … +3 lines (ctrl+o to expand)
 
 ⏺ Bash(npm test) timeout: 1m 0s  
- ⎿  > vi-ri-st-2026-ennakko@1.0.0 test  
- > vitest run  
- … +25 lines (ctrl+o to expand)
+ ⎿  > vi-ri-st-2026-ennakko@1.0.0 test
+
+> vitest run  
+>  … +25 lines (ctrl+o to expand)
 
 ⏺ All 28 tests pass. Let me mark the final task as complete.
 
 ⏺ Let me also verify the app still runs correctly after the refactoring.
 
 ⏺ Bash(npm run build)  
- ⎿  > vi-ri-st-2026-ennakko@1.0.0 build  
- > tsc
+ ⎿  > vi-ri-st-2026-ennakko@1.0.0 build
+
+> tsc
 
 ⏺ Done. Here's a summary of the test implementation:
 
@@ -2480,34 +2481,29 @@ Test Setup
 Dependencies installed:
 
 -   vitest - Modern test framework
--   supertest - HTTP assertions for API testing  
-
+-   supertest - HTTP assertions for API testing
 
 Configuration files:
 
 -   vitest.config.ts - Vitest configuration with in-memory test database
 -   src/test/setup.ts - Test setup that cleans the database between tests
--   src/test/helpers.ts - Helper functions for generating future/past dates  
-
+-   src/test/helpers.ts - Helper functions for generating future/past dates
 
 App refactoring:
 
 -   Created src/app.ts - Exports the Express app for testing
--   Updated src/index.ts - Imports app and starts the server  
-
+-   Updated src/index.ts - Imports app and starts the server
 
 Test Coverage (28 tests)
 
 src/app.test.ts - Health check endpoint:
 
--   GET / returns hello world message  
-
+-   GET / returns hello world message
 
 src/routes/roomsRouter.test.ts (10 tests):
 
 -   POST /rooms - creates rooms, validates required name field, handles duplicates
--   GET /rooms/:id/bookings - returns bookings sorted by time, handles invalid IDs  
-
+-   GET /rooms/:id/bookings - returns bookings sorted by time, handles invalid IDs
 
 src/routes/bookingsRouter.test.ts (17 tests):
 
@@ -2517,11 +2513,62 @@ src/routes/bookingsRouter.test.ts (17 tests):
     -   Times in the past
     -   Overlapping booking conflicts (409)
     -   Back-to-back bookings allowed
--   DELETE /bookings/:id - deletes bookings, handles 404/400 errors  
-
+-   DELETE /bookings/:id - deletes bookings, handles 404/400 errors
 
 Running Tests
 
 npm test # Run tests once  
  npm run test:watch # Watch mode  
  npm run test:coverage # With coverage
+
+# Prompti 38
+
+## Prompti
+
+❯ change the hello world endpoint to maybe health endpoint + update the test
+
+## Vastaus
+
+⏺ Read(src/app.ts)  
+ ⎿  Read 20 lines
+
+⏺ Read(src/app.test.ts)  
+ ⎿  Read 13 lines
+
+⏺ Update(src/app.ts)  
+ ⎿  Added 2 lines, removed 2 lines  
+ 7  
+ 8 app.use(express.json());  
+ 9  
+ 10 -app.get('/', (req: Request, res: Response) => {  
+ 11 - res.json({ message: 'Hello, World!' });  
+ 10 +app.get('/health', (req: Request, res: Response) => {  
+ 11 + res.json({ status: 'ok' });  
+ 12 });  
+ 13  
+ 14 app.use('/rooms', roomsRouter);
+
+⏺ Update(src/app.test.ts)  
+ ⎿  Added 4 lines, removed 4 lines  
+ 2 import request from 'supertest';  
+ 3 import app from './app';  
+ 4  
+ 5 -describe('GET /', () => {  
+ 6 - it('should return hello world message', async () => {  
+ 7 - const response = await request(app).get('/');  
+ 5 +describe('GET /health', () => {  
+ 6 + it('should return ok status', async () => {  
+ 7 + const response = await request(app).get('/health');  
+ 8  
+ 9 expect(response.status).toBe(200);  
+ 10 - expect(response.body).toEqual({ message: 'Hello, World!' });  
+ 10 + expect(response.body).toEqual({ status: 'ok' });  
+ 11 });  
+ 12 });
+
+⏺ Bash(npm test)  
+ ⎿  > vi-ri-st-2026-ennakko@1.0.0 test  
+ > vitest run  
+ … +25 lines (ctrl+o to expand)
+
+⏺ All 28 tests pass. Changed GET / with "Hello, World!" to GET /health returning { status: 'ok' }.
