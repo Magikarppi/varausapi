@@ -185,11 +185,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                  
+ db.exec(`                                                                                 
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                           `);
+    )                                                                                          `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -2267,3 +2267,261 @@ Changes made:
 -   Added ## Prompti subheader for each prompt text
 -   Added ## Vastaus subheader for each answer
 -   Added proper blank lines between sections
+
+# Prompti 37
+
+## Prompti
+
+❯ Let's implement tests for the API. Use best practices.
+
+## Vastaus
+
+⏺ I'll explore the codebase to understand the API structure and existing setup before implementing tests.
+
+⏺ Explore(Explore API structure)  
+ ⎿  Done (23 tool uses · 25.9k tokens · 45s)
+
+⏺ Now I understand the codebase. It's an Express.js API with TypeScript for a meeting room booking system with no existing tests. Let me  
+ implement comprehensive tests.
+
+⏺ Read(package.json)  
+ ⎿  Read 27 lines
+
+⏺ Read(src/index.ts)  
+ ⎿  Read 23 lines
+
+⏺ Read(src/routes/roomsRouter.ts)  
+ ⎿  Read 37 lines
+
+⏺ Read(src/routes/bookingsRouter.ts)  
+ ⎿  Read 43 lines
+
+⏺ Read(src/db/connection.ts)  
+ ⎿  Read 43 lines
+
+⏺ Read(src/middleware/validation.ts)  
+ ⎿  Read 47 lines
+
+⏺ Bash(npm install -D vitest supertest @types/supertest)  
+ ⎿  added 74 packages, and audited 232 packages in 12s
+
+     54 packages are looking for funding
+     … +8 lines (ctrl+o to expand)
+
+
+⏺ Write(vitest.config.ts)  
+ ⎿  Wrote 16 lines to vitest.config.ts  
+ 1 import { defineConfig } from 'vitest/config';  
+ 2 export default defineConfig({  
+ 3 test: {  
+ 4 globals: true,  
+ 5 environment: 'node',  
+ 6 include: ['src/**/*.test.ts'],  
+ 7 coverage: {  
+ 8 provider: 'v8',  
+ 9 reporter: ['text', 'html'],  
+ … +6 lines (ctrl+o to expand)
+
+⏺ Update(package.json)  
+ ⎿  Error editing file
+
+⏺ Read(package.json)  
+ ⎿  Read 30 lines
+
+⏺ Update(package.json)  
+ ⎿  Added 4 lines, removed 1 line  
+ 5 "scripts": {  
+ 6 "build": "tsc",  
+ 7 "start": "node dist/index.js",  
+ 8 - "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts"  
+ 8 + "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",  
+ 9 + "test": "vitest run",  
+ 10 + "test:watch": "vitest",  
+ 11 + "test:coverage": "vitest run --coverage"  
+ 12 },  
+ 13 "keywords": [],  
+ 14 "author": "",
+
+⏺ Write(src/app.ts)  
+ ⎿  Wrote 20 lines to src/app.ts  
+ 1 import express, { Request, Response } from 'express';  
+ 2 import roomsRouter from './routes/roomsRouter';  
+ 3 import bookingsRouter from './routes/bookingsRouter';  
+ 4 import { errorHandler } from './middleware/errorHandler';  
+ 5 const app = express();  
+ 6 app.use(express.json());  
+ 7 app.get('/', (req: Request, res: Response) => {  
+ … +10 lines (ctrl+o to expand)
+
+⏺ Write(src/index.ts)  
+ ⎿  Added 1 line, removed 16 lines  
+ 1 -import express, { Request, Response } from 'express';  
+ 2 -import roomsRouter from './routes/roomsRouter';  
+ 3 -import bookingsRouter from './routes/bookingsRouter';  
+ 4 -import { errorHandler } from './middleware/errorHandler';  
+ 1 +import app from './app';  
+ 2  
+ 6 -const app = express();  
+ 3 const PORT = process.env.PORT || 3000;  
+ 4  
+ 9 -app.use(express.json());  
+ 10 -  
+ 11 -app.get('/', (req: Request, res: Response) => {  
+ 12 - res.json({ message: 'Hello, World!' });  
+ 13 -});  
+ 14 -  
+ 15 -app.use('/rooms', roomsRouter);  
+ 16 -app.use('/bookings', bookingsRouter);  
+ 17 -  
+ 18 -app.use(errorHandler);  
+ 19 -  
+ 5 app.listen(PORT, () => {  
+ 6 console.log(`Server is running on http://localhost:${PORT}`);  
+ 7 });
+
+⏺ Write(src/test/setup.ts)  
+ ⎿  Wrote 16 lines to src/test/setup.ts  
+ 1 import { beforeEach, afterAll } from 'vitest';  
+ 2 import db from '../db/connection';  
+ 3 export function cleanDatabase() {  
+ 4 db.exec('DELETE FROM bookings');  
+ 5 db.exec('DELETE FROM rooms');  
+ 6 }  
+ 7 beforeEach(() => {  
+ 8 cleanDatabase();  
+ … +6 lines (ctrl+o to expand)
+
+⏺ Update(vitest.config.ts)  
+ ⎿  Added 5 lines, removed 1 line  
+ 5 globals: true,  
+ 6 environment: 'node',  
+ 7 include: ['src/**/*.test.ts'],  
+ 8 + setupFiles: ['src/test/setup.ts'],  
+ 9 + env: {  
+ 10 + DB_PATH: ':memory:',  
+ 11 + },  
+ 12 coverage: {  
+ 13 provider: 'v8',  
+ 14 reporter: ['text', 'html'],  
+ 15 include: ['src/**/*.ts'],  
+ 12 - exclude: ['src/**/*.test.ts'],  
+ 16 + exclude: ['src/**/*.test.ts', 'src/test/**'],  
+ 17 },  
+ 18 },  
+ 19 });
+
+⏺ Write(src/test/helpers.ts)  
+ ⎿  Wrote 12 lines to src/test/helpers.ts  
+ 1 export function futureDate(hoursFromNow: number): string {  
+ 2 const date = new Date();  
+ 3 date.setHours(date.getHours() + hoursFromNow);  
+ 4 return date.toISOString();  
+ 5 }  
+ 6 export function pastDate(hoursAgo: number): string {  
+ 7 const date = new Date();  
+ 8 date.setHours(date.getHours() - hoursAgo);  
+ 9 return date.toISOString();  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Write(src/routes/roomsRouter.test.ts)  
+ ⎿  Wrote 144 lines to src/routes/roomsRouter.test.ts  
+ 1 import { describe, it, expect } from 'vitest';  
+ 2 import request from 'supertest';  
+ 3 import app from '../app';  
+ 4 import { createRoom, createBooking } from '../db';  
+ 5 import { futureDate } from '../test/helpers';  
+ 6 describe('POST /rooms', () => {  
+ 7 it('should create a room with name only', async () => {  
+ 8 const response = await request(app)  
+ 9 .post('/rooms')  
+ … +134 lines (ctrl+o to expand)
+
+⏺ Write(src/routes/bookingsRouter.test.ts)  
+ ⎿  Wrote 310 lines to src/routes/bookingsRouter.test.ts  
+ 1 import { describe, it, expect } from 'vitest';  
+ 2 import request from 'supertest';  
+ 3 import app from '../app';  
+ 4 import { createRoom, createBooking } from '../db';  
+ 5 import { futureDate, pastDate } from '../test/helpers';  
+ 6 describe('POST /bookings', () => {  
+ 7 it('should create a booking', async () => {  
+ 8 const room = createRoom({ name: 'Test Room' });  
+ … +300 lines (ctrl+o to expand)
+
+⏺ Write(src/app.test.ts)  
+ ⎿  Wrote 13 lines to src/app.test.ts  
+ 1 import { describe, it, expect } from 'vitest';  
+ 2 import request from 'supertest';  
+ 3 import app from './app';  
+ 4 describe('GET /', () => {  
+ 5 it('should return hello world message', async () => {  
+ 6 const response = await request(app).get('/');  
+ 7 expect(response.status).toBe(200);  
+ 8 expect(response.body).toEqual({ message: 'Hello, World!' });  
+ … +3 lines (ctrl+o to expand)
+
+⏺ Bash(npm test) timeout: 1m 0s  
+ ⎿  > vi-ri-st-2026-ennakko@1.0.0 test  
+ > vitest run  
+ … +25 lines (ctrl+o to expand)
+
+⏺ All 28 tests pass. Let me mark the final task as complete.
+
+⏺ Let me also verify the app still runs correctly after the refactoring.
+
+⏺ Bash(npm run build)  
+ ⎿  > vi-ri-st-2026-ennakko@1.0.0 build  
+ > tsc
+
+⏺ Done. Here's a summary of the test implementation:
+
+Test Setup
+
+Dependencies installed:
+
+-   vitest - Modern test framework
+-   supertest - HTTP assertions for API testing  
+
+
+Configuration files:
+
+-   vitest.config.ts - Vitest configuration with in-memory test database
+-   src/test/setup.ts - Test setup that cleans the database between tests
+-   src/test/helpers.ts - Helper functions for generating future/past dates  
+
+
+App refactoring:
+
+-   Created src/app.ts - Exports the Express app for testing
+-   Updated src/index.ts - Imports app and starts the server  
+
+
+Test Coverage (28 tests)
+
+src/app.test.ts - Health check endpoint:
+
+-   GET / returns hello world message  
+
+
+src/routes/roomsRouter.test.ts (10 tests):
+
+-   POST /rooms - creates rooms, validates required name field, handles duplicates
+-   GET /rooms/:id/bookings - returns bookings sorted by time, handles invalid IDs  
+
+
+src/routes/bookingsRouter.test.ts (17 tests):
+
+-   POST /bookings - creates bookings with all validation:
+    -   Missing required fields
+    -   Invalid time ranges (start >= end)
+    -   Times in the past
+    -   Overlapping booking conflicts (409)
+    -   Back-to-back bookings allowed
+-   DELETE /bookings/:id - deletes bookings, handles 404/400 errors  
+
+
+Running Tests
+
+npm test # Run tests once  
+ npm run test:watch # Watch mode  
+ npm run test:coverage # With coverage
