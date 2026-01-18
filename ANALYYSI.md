@@ -12,6 +12,7 @@
 -   AI ei myöskään huomannut lisätä virheenkäsittelyä samalla kun teki koodia.
 -   AI ei organisoinut koodia milestäni hyvällä tavalla jatkokehitystä ajatellen kun se loi alussa niin tietokantaan kuin päätepisteisiin liittyvät kooditiedostot kansion src alle, eikä esimerkiksi kansioiden src/db ja src/routes.
 -   Tekoälyn luomassa koodissa oli logiikka/käyttötapavirhe, jonka se korjasi myöhemmin antamani virheviestin avulla.
+-   Tekoäly ei huomannut päivittää README.md-tiedostoa testien lisäämisen jälkeen (lähinnä miten ajaa testit).
 
 3.
 
