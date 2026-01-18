@@ -118,6 +118,16 @@ DELETE /bookings/:id
 - `400 Bad Request` - Invalid booking id
 - `404 Not Found` - Booking not found
 
+## Testing
+
+```bash
+npm test              # Run tests once
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+```
+
+Tests use an in-memory SQLite database and cover all API endpoints.
+
 ## Database
 
 SQLite database stored in `data/database.db`. The database is created automatically on first server start.

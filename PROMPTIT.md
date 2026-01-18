@@ -185,11 +185,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                             
+ db.exec(`                                                                          
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                      `);
+    )                                                                                   `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -2661,3 +2661,45 @@ Muutos: Hello World -endpoint korvattu health-endpointilla
 GET / -> GET /health, palauttaa { status: 'ok' }
 
 3 files changed (PROMPTIT.md, src/app.ts, src/app.test.ts).
+
+# Prompti 41
+
+## Prompti
+
+update @README.md about tests
+
+## Vastaus
+
+⏺ Update(README.md)  
+ ⎿  Added Testing section before Database section  
+ 121 ## Testing  
+ 122  
+ 123 ```bash  
+ 124 npm test              # Run tests once  
+ 125 npm run test:watch    # Run tests in watch mode  
+ 126 npm run test:coverage # Run tests with coverage report  
+ 127 ```  
+ 128  
+ 129 Tests use an in-memory SQLite database and cover all API endpoints.
+
+⏺ Added a Testing section to README.md with the test commands.
+
+# Prompti 42
+
+## Prompti
+
+Read the last 500-lines of @PROMPTIT.md and see how the prompts and answers are structured. Copy this latest prompt and your answer at the end of that file. Then commit these changes including the readme-update and the prompts update
+
+## Vastaus
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read last 500 lines to understand structure
+
+⏺ Structure identified: Each prompt has `# Prompti X` main header, `## Prompti` for prompt text, and `## Vastaus` for answer.
+
+⏺ Appended prompts 41-42 to PROMPTIT.md with consistent formatting.
+
+⏺ Bash(git add README.md PROMPTIT.md && git commit)  
+ ⎿  Committed changes with Finnish message
+
+⏺ Done. Committed README testing section update and PROMPTIT.md with new prompts.
