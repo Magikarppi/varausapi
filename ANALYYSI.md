@@ -17,3 +17,4 @@
 
 -   Jäsennytin ja organisoin koodin paremmin jatkokehitystä ajatelllen, että tiedostot ovat loogisissa alikansioissa ja siten helpommin löydettävissä ja ymmärrettävissä.
 -   Pyysin lisäämään virheidenkäsittelyn koodiin, jatkokehityksen, palvelimen toimivuuden ja virheiden löytämisen (debuggauksen) takia.
+-   Pyysin tekoälyä lisäämään testit, jotta varmuus koodin toimivuudesta paranee ja jatkokehitys on kivuttomampaa ja helpompaa.
