@@ -185,11 +185,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                
+ db.exec(`                                                                             
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                         `);
+    )                                                                                      `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -2525,6 +2525,63 @@ npm test # Run tests once
 
 ## Prompti
 
+❯ commit the changes in finnish include PROMPTIT.md
+
+## Vastaus
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is up to date with 'origin/main'.  
+ … +18 lines (ctrl+o to expand)
+
+⏺ Bash(git diff --stat)  
+ ⎿   PROMPTIT.md | 262 ++++++-  
+ package-lock.json | 1994 +++++++++++++++++++++++++++++++++++++++++++++++++++--  
+ package.json | 10 +-  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Bash(git log --oneline -5)  
+ ⎿  5d020d9 Lisäys: Analyysin päivitys  
+ 0e20f30 KORJAUS: uudelleennimeä kielletty nimi. LISÄYS: prompti-vastaus otsikot  
+ 7c50093 lisäys: PROMPTIT-tiedoston päivitys  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Error: File content (29584 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific  
+ portions of the file, or use the GrepTool to search for specific content.
+
+⏺ Bash(git add PROMPTIT.md package.json package-lock.json src/index.ts src/app.ts src/app.test.ts src/routes/bookingsRouter.test.ts  
+ src/routes/roomsRouter.test.ts src/…)  
+ ⎿  (No content)
+
+⏺ Bash(git commit -m "Lisäys: API-testit Vitestillä ja Supertestillä…)  
+ ⎿  [main ad9bee6] Lisäys: API-testit Vitestillä ja Supertestillä  
+ 11 files changed, 2720 insertions(+), 91 deletions(-)  
+ create mode 100644 src/app.test.ts  
+ … +6 lines (ctrl+o to expand)
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +2 lines (ctrl+o to expand)
+
+⏺ Committed successfully: ad9bee6
+
+Lisäys: API-testit Vitestillä ja Supertestillä
+
+Toteutettu kattava testikattavuus API-reiteille:
+
+-   Huoneiden luonti ja varausten haku (10 testiä)
+-   Varausten luonti, validointi ja poisto (17 testiä)
+-   Terveystarkistus-endpoint (1 testi)
+
+11 files changed with 2720 insertions. The branch is 1 commit ahead of origin/main.
+
+# Prompti 39
+
+## Prompti
+
 ❯ change the hello world endpoint to maybe health endpoint + update the test
 
 ## Vastaus
@@ -2567,8 +2624,40 @@ npm test # Run tests once
  12 });
 
 ⏺ Bash(npm test)  
- ⎿  > vi-ri-st-2026-ennakko@1.0.0 test  
- > vitest run  
- … +25 lines (ctrl+o to expand)
+ ⎿  > vi-ri-st-2026-ennakko@1.0.0 test
+
+> vitest run  
+>  … +25 lines (ctrl+o to expand)
 
 ⏺ All 28 tests pass. Changed GET / with "Hello, World!" to GET /health returning { status: 'ok' }.
+
+# Prompti 40
+
+## Prompti
+
+❯ commit this in finnish
+
+## Vastaus
+
+⏺ Bash(git add src/app.ts src/app.test.ts && git commit -m "Muutos: Hello World -endpoint korvattu health-endpointilla…)  
+ ⎿  Interrupted · What should Claude do instead?
+
+❯ commit these in finnish and include PROMPTIT.md
+
+⏺ Bash(git status)  
+ ⎿  On branch main  
+ Your branch is ahead of 'origin/main' by 1 commit.  
+ (use "git push" to publish your local commits)  
+ … +9 lines (ctrl+o to expand)
+
+⏺ Bash(git add PROMPTIT.md src/app.ts src/app.test.ts && git commit -m "Muutos: Hello World -endpoint korvattu health-endpointilla…)  
+ ⎿  [main 779abf3] Muutos: Hello World -endpoint korvattu health-endpointilla  
+ 3 files changed, 73 insertions(+), 26 deletions(-)
+
+⏺ Committed: 779abf3
+
+Muutos: Hello World -endpoint korvattu health-endpointilla
+
+GET / -> GET /health, palauttaa { status: 'ok' }
+
+3 files changed (PROMPTIT.md, src/app.ts, src/app.test.ts).
