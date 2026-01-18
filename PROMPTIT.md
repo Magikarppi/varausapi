@@ -1,13 +1,17 @@
-# Prompti 1:
+# Prompti 1
+
+## Prompti
 
 Set up node.js project with typescript. Use latest package versions. install nodemon, express, typescript and types for these.  
  Remember to add tsconfig file. create initial index.ts file. add script to package.json to start the express server and run in dev  
  with nodemon.
 
+## Vastaus
+
 ⏺ I'll set up a Node.js project with TypeScript for you. Let me create a todo list and get started.
 
 ⏺ Bash(npm init -y)  
- ⎿  Wrote to /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/package.json:
+ ⎿  Wrote to /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/package.json:
 
      {
      … +11 lines (ctrl+o to expand)
@@ -32,7 +36,7 @@ Set up node.js project with typescript. Use latest package versions. install nod
  10 "skipLibCheck": true,  
  … +10 lines (ctrl+o to expand)
 
-⏺ Bash(mkdir -p /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src)  
+⏺ Bash(mkdir -p /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src)  
  ⎿  (No content)
 
 ⏺ Write(src/index.ts)  
@@ -52,7 +56,7 @@ Set up node.js project with typescript. Use latest package versions. install nod
 ⏺ Update(package.json)  
  ⎿  Added 4 lines, removed 2 lines  
  1 {  
- 2 "name": "vincit-rising-star-2026-ennakko",  
+ 2 "name": "xxx-xxx-xxx-2026-ennakko",  
  3 "version": "1.0.0",  
  4 - "main": "index.js",  
  4 + "main": "dist/index.js",  
@@ -66,7 +70,7 @@ Set up node.js project with typescript. Use latest package versions. install nod
  11 "author": "",
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -94,9 +98,13 @@ Scripts:
 
 Run npm run dev to start the development server.
 
-# Prompti 2:
+# Prompti 2
+
+## Prompti
 
 install and config sqlite
+
+## Vastaus
 
 ⏺ Bash(npm install better-sqlite3 && npm install -D @types/better-sqlite3)  
  ⎿  added 35 packages, and audited 157 packages in 2s
@@ -114,24 +122,24 @@ install and config sqlite
  6 export default db;  
  … +1 line (ctrl+o to expand)
 
-⏺ Bash(mkdir -p /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/data)  
+⏺ Bash(mkdir -p /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/data)  
  ⎿  (No content)
 
 ⏺ Write(.gitignore)  
  ⎿  Error writing file
 
-⏺ Bash(cat > /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/.gitignore << 'EOF'  
+⏺ Bash(cat > /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/.gitignore << 'EOF'  
  node_modules/…)  
  ⎿  (No content)
 
 ⏺ Bash(npm run build)  
  ⎿  Error: Exit code 1
 
-     > vincit-rising-star-2026-ennakko@1.0.0 build
+     > xxx-xxx-xxx-2026-ennakko@1.0.0 build
      > tsc
 
      src/db.ts(6,7): error TS4023: Exported variable 'db' has or is using name 'BetterSqlite3.Database' from external module
-     "/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/@types/better-sqlite3/index" but cannot be named.
+     "/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/@types/better-sqlite3/index" but cannot be named.
 
 ⏺ Read(src/db.ts)  
  ⎿  Read 11 lines
@@ -156,7 +164,7 @@ install and config sqlite
  9
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -177,11 +185,11 @@ Usage:
  import db from './db';
 
 // Example: create a table  
- db.exec(`                                                                                          
+ db.exec(`                                                                                  
     CREATE TABLE IF NOT EXISTS users (                                                                                                      
       id INTEGER PRIMARY KEY AUTOINCREMENT,                                                                                                 
       name TEXT NOT NULL                                                                                                                    
-    )                                                                                                   `);
+    )                                                                                           `);
 
 // Example: insert  
  const insert = db.prepare('INSERT INTO users (name) VALUES (?)');  
@@ -190,10 +198,14 @@ Usage:
 // Example: query  
  const users = db.prepare('SELECT \* FROM users').all();
 
-# Prompti 3:
+# Prompti 3
+
+## Prompti
 
 what does the line db.pragma('journal_mode = WAL'); do in @src/db.ts  
  ⎿  Read src/db.ts (11 lines)
+
+## Vastaus
 
 ⏺ The line db.pragma('journal_mode = WAL') enables Write-Ahead Logging mode for SQLite.
 
@@ -217,9 +229,13 @@ Trade-offs:
 
 It's generally recommended for most applications, especially web servers with concurrent access.
 
-# Prompti 4:
+# Prompti 4
+
+## Prompti
 
 implement creating db table(s) for meeting room bookings, there can be multiple meeting rooms.
+
+## Vastaus
 
 ⏺ Write(src/schema.ts)  
  ⎿  Wrote 34 lines to src/schema.ts  
@@ -249,7 +265,7 @@ implement creating db table(s) for meeting room bookings, there can be multiple 
  8
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -288,10 +304,14 @@ rooms
  Indexes are created on room_id and start_time/end_time for efficient queries. The database initializes automatically when the server  
  starts.
 
-# Prompti 5:
+# Prompti 5
+
+## Prompti
 
 Why is the dist folder tracked by git (git status shows changes) even though we have dist/ in the .gitignore? How to remove from  
  source control
+
+## Vastaus
 
 ⏺ The .gitignore only prevents untracked files from being added. If dist/ was committed before being added to .gitignore, git continues  
  tracking it.
@@ -306,11 +326,15 @@ git commit -m "Remove dist from source control"
 
 The --cached flag removes files from git's index only, leaving them in your working directory.
 
-# Prompti 6:
+# Prompti 6
+
+## Prompti
 
 refactor db related stuff under src/db
 
-⏺ Bash(mkdir -p /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db)  
+## Vastaus
+
+⏺ Bash(mkdir -p /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/db)  
  ⎿  (No content)
 
 ⏺ Read(src/db.ts)  
@@ -359,12 +383,12 @@ refactor db related stuff under src/db
  4 initializeDatabase();  
  5
 
-⏺ Bash(rm /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db.ts  
- /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/schema.ts)  
+⏺ Bash(rm /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/db.ts  
+ /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/schema.ts)  
  ⎿  (No content)
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -378,9 +402,13 @@ src/db/
 Import from anywhere:  
  import { db, initializeDatabase } from './db';
 
-# Prompti 7:
+# Prompti 7
+
+## Prompti
 
 add initial endpoint, DAO and query for booking a room for some time slot
+
+## Vastaus
 
 ⏺ I'll help you add a room booking feature. Let me first explore the codebase to understand the  
  existing structure.
@@ -453,7 +481,7 @@ add initial endpoint, DAO and query for booking a room for some time slot
  29 });
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -484,10 +512,14 @@ Example request:
  -d '{"room_id": 1, "title": "Team meeting", "booked_by": "user@example.com", "start_time":  
  "2026-01-17T10:00:00Z", "end_time": "2026-01-17T11:00:00Z"}'
 
-# Prompti 8:
+# Prompti 8
+
+## Prompti
 
 give me a few useful select queries to run against the db in sqlite terminal for the rooms and  
  bookings tables
+
+## Vastaus
 
 ⏺ Here are some useful queries for the SQLite terminal:
 
@@ -535,9 +567,13 @@ give me a few useful select queries to run against the db in sqlite terminal for
 
 Run with: sqlite3 data/database.db then paste the query.
 
-# Prompti 9:
+# Prompti 9
+
+## Prompti
 
 add endpoint, dao and query for adding a room
+
+## Vastaus
 
 ⏺ Write(src/db/roomsDao.ts)  
  ⎿  Wrote 32 lines to src/db/roomsDao.ts  
@@ -594,7 +630,7 @@ add endpoint, dao and query for adding a room
  29
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -621,9 +657,13 @@ Example request:
  -H "Content-Type: application/json" \  
  -d '{"name": "Conference Room A", "capacity": 10}'
 
-# Prompti 10:
+# Prompti 10
+
+## Prompti
 
 refactor endpoints under routes (create bookingsRouter and roomsRouter) and move typescript typings under src/types.ts
+
+## Vastaus
 
 ⏺ Read(src/db/bookingsDao.ts)  
  ⎿  Read 34 lines
@@ -762,7 +802,7 @@ refactor endpoints under routes (create bookingsRouter and roomsRouter) and move
  22 });
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -790,9 +830,13 @@ Changes:
 -   DAOs now import types from ../types
 -   index.ts mounts routers with app.use('/rooms', roomsRouter) etc.
 
-# Prompti 11:
+# Prompti 11
+
+## Prompti
 
 commit the changes. make the commit message in Finnish
+
+## Vastaus
 
 ⏺ Bash(git diff --staged && git diff)  
  ⎿  diff --git a/PROMPTIT.md b/PROMPTIT.md  
@@ -822,12 +866,16 @@ commit the changes. make the commit message in Finnish
 ⏺ Committed successfully. Branch is now 3 commits ahead of origin/main. Only PROMPTIT.md remains modified (not included in this  
  commit).
 
-# Prompti 12:
+# Prompti 12
+
+## Prompti
 
 refactor request body checks in @src/routes/bookingsRouter.ts and in @src/routes/roomsRouter.ts to middleware functions under  
  routes or src (whichever makes more sense)  
  ⎿  Read src/routes/bookingsRouter.ts (20 lines)  
  ⎿  Read src/routes/roomsRouter.ts (20 lines)
+
+## Vastaus
 
 ⏺ Read(src/routes/bookingsRouter.ts)  
  ⎿  Read 20 lines
@@ -892,7 +940,7 @@ refactor request body checks in @src/routes/bookingsRouter.ts and in @src/routes
  12 });
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -911,9 +959,13 @@ Changes:
 -   src/middleware/validation.ts - Contains validateCreateBooking and validateCreateRoom middleware functions
 -   Both routers now use middleware in route definition: router.post('/', validateCreateBooking, handler)
 
-# Prompti 13:
+# Prompti 13
+
+## Prompti
 
 commit the middleware changes (commit message in Finnish, include PROMPTIT.md also)
+
+## Vastaus
 
 ⏺ Bash(git status)  
  ⎿  On branch main  
@@ -940,12 +992,16 @@ commit the middleware changes (commit message in Finnish, include PROMPTIT.md al
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
 
-# Prompti 14:
+# Prompti 14
+
+## Prompti
 
 Thinking if booking start and end times should be timestamps with timezone in @src/db/schema.ts and type of Date in  
  @src/types.ts ?  
  ⎿  Read src/db/schema.ts (34 lines)  
  ⎿  Read src/types.ts (30 lines)
+
+## Vastaus
 
 ⏺ Read(src/db/schema.ts)  
  ⎿  Read 34 lines
@@ -982,11 +1038,15 @@ What I'd actually change:
 
 Would you like me to add that validation instead?
 
-# Prompti 15:
+# Prompti 15
+
+## Prompti
 
 ❯ Yes implement that start_time < end_time in middleware. Should it be enforced in the booking INSERT query as well?  
  @src/db/bookingsDao.ts  
  ⎿  Read src/db/bookingsDao.ts (17 lines)
+
+## Vastaus
 
 ⏺ Yes, defense in depth is good practice - validate in middleware for user-friendly errors, and add a CHECK constraint in the  
  database as a safety net.
@@ -1021,7 +1081,7 @@ Would you like me to add that validation instead?
  26
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1039,9 +1099,13 @@ Database (src/db/schema.ts):
 Note: The CHECK constraint only applies to new databases. For the existing data/database.db, you'd need to delete it and restart  
  the server to recreate the table with the constraint (or run a migration to recreate the table).
 
-# Prompti 16:
+# Prompti 16
+
+## Prompti
 
 commit these changes in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff)  
  ⎿  On branch main  
@@ -1061,9 +1125,13 @@ commit these changes in Finnish
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
 
-# Prompti 17:
+# Prompti 17
+
+## Prompti
 
 add endpoint, dao and query for deleting a booking
+
+## Vastaus
 
 ⏺ Read(src/db/bookingsDao.ts)  
  ⎿  Read 17 lines
@@ -1123,7 +1191,7 @@ add endpoint, dao and query for deleting a booking
 ⏺ Bash(npm run build)  
  ⎿  Error: Exit code 2
 
-     > vincit-rising-star-2026-ennakko@1.0.0 build
+     > xxx-xxx-xxx-2026-ennakko@1.0.0 build
      > tsc
 
      src/routes/bookingsRouter.ts(15,23): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type
@@ -1142,7 +1210,7 @@ add endpoint, dao and query for deleting a booking
  17 if (isNaN(id)) {
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1162,9 +1230,13 @@ Endpoint (src/routes/bookingsRouter.ts):
 Example:  
  curl -X DELETE http://localhost:3000/bookings/1
 
-# Prompti 18:
+# Prompti 18
+
+## Prompti
 
 commit delete booking changes in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1184,9 +1256,13 @@ commit delete booking changes in Finnish
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
 
-# Prompti 19:
+# Prompti 19
+
+## Prompti
 
 add endpoint for viewing all bookings for a room
+
+## Vastaus
 
 ⏺ Read(src/db/bookingsDao.ts)  
  ⎿  Read 26 lines
@@ -1237,7 +1313,7 @@ add endpoint for viewing all bookings for a room
  26 export default router;
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1256,9 +1332,13 @@ Endpoint (src/routes/roomsRouter.ts):
 Example:  
  curl http://localhost:3000/rooms/1/bookings
 
-# Prompti 20:
+# Prompti 20
+
+## Prompti
 
 commit these changes in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1278,10 +1358,14 @@ commit these changes in Finnish
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
 
-# Prompti 21:
+# Prompti 21
+
+## Prompti
 
 Does it make sense to move the req.params.id is number check to separate middleware in @src/routes/bookingsRouter.ts  
  ⎿  Read src/routes/bookingsRouter.ts (33 lines)
+
+## Vastaus
 
 ⏺ It's borderline. Currently you have 2 endpoints with this check (DELETE /bookings/:id and GET /rooms/:id/bookings).
 
@@ -1320,9 +1404,13 @@ If you want to proceed, a flexible approach would be:
 
 Want me to implement this?
 
-# Prompti 22:
+# Prompti 22
+
+## Prompti
 
 Actually enforce that both start_time and end_time must not be in the past
+
+## Vastaus
 
 ⏺ Update(src/middleware/validation.ts)  
  ⎿  Added 11 lines  
@@ -1361,7 +1449,7 @@ Actually enforce that both start_time and end_time must not be in the past
  28
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1379,9 +1467,13 @@ Database (src/db/schema.ts):
 Note: Database constraints use datetime('now') which is UTC. Make sure your ISO 8601 strings include the Z suffix or timezone  
  offset for consistent comparison.
 
-# Prompti 23:
+# Prompti 23
+
+## Prompti
 
 commit these changes in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1401,20 +1493,24 @@ commit these changes in Finnish
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
 
-# Prompti 24:
+# Prompti 24
+
+## Prompti
 
 I tried to clear the db by running rm data/database.db\* and starting the server again I get:  
- /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/better-sqlite3/lib/methods/wrappers.js:5 return  
+ /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/better-sqlite3/lib/methods/wrappers.js:5 return  
  this[cppdb].prepare(sql, this, false); ^ SqliteError: no such table: bookings at Database.prepare  
- (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21) at  
- Object.<anonymous> (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db/bookingsDao.ts:4:26) at  
+ (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/better-sqlite3/lib/methods/wrappers.js:5:21) at  
+ Object.<anonymous> (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/db/bookingsDao.ts:4:26) at  
  Module.\_compile (node:internal/modules/cjs/loader:1740:14) at Module.m.\_compile  
- (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/ts-node/src/index.ts:1618:23) at  
+ (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/ts-node/src/index.ts:1618:23) at  
  node:internal/modules/cjs/loader:1905:10 at Object.require.extensions.<computed> [as .ts]  
- (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/ts-node/src/index.ts:1621:12) at Module.load  
+ (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/ts-node/src/index.ts:1621:12) at Module.load  
  (node:internal/modules/cjs/loader:1474:32) at Function.\_load (node:internal/modules/cjs/loader:1286:12) at  
  TracingChannel.traceSync (node:diagnostics_channel:322:14) at wrapModuleLoad (node:internal/modules/cjs/loader:234:24) {  
  code: 'SQLITE_ERROR'
+
+## Vastaus
 
 ⏺ The issue is that db.prepare() in the DAOs runs at module import time, before initializeDatabase() is called. The prepared  
  statements try to reference tables that don't exist yet.
@@ -1473,7 +1569,7 @@ Let me fix this by initializing the database in the connection file.
 
 ⏺ Now let me remove the duplicate schema.ts and update the exports.
 
-⏺ Bash(rm /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db/schema.ts)  
+⏺ Bash(rm /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/db/schema.ts)  
  ⎿  (No content)
 
 ⏺ Read(src/db/index.ts)  
@@ -1503,13 +1599,13 @@ Let me fix this by initializing the database in the connection file.
  7
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
-⏺ Bash(rm -f /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/data/database.db\* && npm run dev & timeout: 15s  
+⏺ Bash(rm -f /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/data/database.db\* && npm run dev & timeout: 15s  
  sleep 3 && curl -s http://localhost:3000/ && pkill -f "ts-n…)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 dev
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 dev
 
 > nodemon --watch src --ext ts --exec ts-node src/index.ts  
 >  … +9 lines (ctrl+o to expand)
@@ -1524,9 +1620,13 @@ Changes:
 
 Now tables are created before any DAO modules try to prepare statements. Tested with fresh database - server starts correctly.
 
-# Prompti 25:
+# Prompti 25
+
+## Prompti
 
 ❯ commit
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1548,9 +1648,13 @@ alustus ennen DAO-moduulien lataus…)
 
 ⏺ Committed. Branch is 3 commits ahead of origin/main, working tree clean.
 
-# Prompti 26:
+# Prompti 26
+
+## Prompti
 
 ❯ add check to prevent overlapping bookings
+
+## Vastaus
 
 ⏺ Read(src/db/bookingsDao.ts)  
  ⎿  Read 34 lines
@@ -1601,7 +1705,7 @@ alustus ennen DAO-moduulien lataus…)
  36
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1617,9 +1721,13 @@ Middleware (src/middleware/validation.ts):
 
 Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.start_time
 
-# Prompti 27:
+# Prompti 27
+
+## Prompti
 
 ❯ commit in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1638,21 +1746,25 @@ Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.st
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean.
 
-# Prompti 28:
+# Prompti 28
+
+## Prompti
 
 ❯ when trying to add new booking wit data {"room_id": 1, "title": "Team meeting", "booked_by": "user@example.com", "start_time":  
  "2026-01-17T812:00:00Z", "end_time": "2026-01-18T13:00:00Z"} I get SqliteError: non-deterministic use of datetime() in a CHECK  
  constraint  
- at createBooking (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/db/bookingsDao.ts:10:32)  
- at /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/routes/bookingsRouter.ts:10:32  
- at Layer.handleRequest (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/layer.js:152:17)  
- at next (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/route.js:157:13)  
- at validateCreateBooking (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/src/middleware/validation.ts:34:3)  
- at Layer.handleRequest (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/layer.js:152:17)  
- at next (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/route.js:157:13)  
- at Route.dispatch (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/route.js:117:3)  
- at handle (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/index.js:435:11)  
- at Layer.handleRequest (/Users/samih/Documents/code/vincit-rising-star-2026-ennakko/node_modules/router/lib/layer.js:152:17)
+ at createBooking (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/db/bookingsDao.ts:10:32)  
+ at /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/routes/bookingsRouter.ts:10:32  
+ at Layer.handleRequest (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/lib/layer.js:152:17)  
+ at next (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/lib/route.js:157:13)  
+ at validateCreateBooking (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/src/middleware/validation.ts:34:3)  
+ at Layer.handleRequest (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/lib/layer.js:152:17)  
+ at next (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/lib/route.js:157:13)  
+ at Route.dispatch (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/lib/route.js:117:3)  
+ at handle (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/index.js:435:11)  
+ at Layer.handleRequest (/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/node_modules/router/lib/layer.js:152:17)
+
+## Vastaus
 
 ⏺ The datetime('now') in CHECK constraints is not allowed in SQLite because it's non-deterministic. Since the middleware already validates  
  this, let me remove those constraints from the database.
@@ -1673,8 +1785,8 @@ Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.st
  32 `);  
  33
 
-⏺ Bash(rm -f /Users/samih/Documents/code/vincit-rising-star-2026-ennakko/data/database.db\* && npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+⏺ Bash(rm -f /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/data/database.db\* && npm run build)  
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1683,9 +1795,13 @@ Overlap logic: existing.start_time < new.end_time AND existing.end_time > new.st
 
 Deleted the old database file so the table will be recreated on next server start.
 
-# Prompti 29:
+# Prompti 29
+
+## Prompti
 
 ❯ commit this fix in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1705,9 +1821,13 @@ Deleted the old database file so the table will be recreated on next server star
 
 ⏺ Committed. Branch is 3 commits ahead of origin/main, working tree clean.
 
-# Prompti 30:
+# Prompti 30
+
+## Prompti
 
 ❯ Write readme file how to use the api and how to start the dev server
+
+## Vastaus
 
 ⏺ Write(README.md)  
  ⎿  Wrote 131 lines to README.md  
@@ -1729,9 +1849,13 @@ Deleted the old database file so the table will be recreated on next server star
 
 Want me to commit it?
 
-# Prompti 31:
+# Prompti 31
+
+## Prompti
 
 ❯ commit in Finnish
+
+## Vastaus
 
 ⏺ Bash(git add README.md && git commit -m "dokumentaatio: lisää README API-ohjeilla…)  
  ⎿  [main 1c99116] dokumentaatio: lisää README API-ohjeilla  
@@ -1746,7 +1870,9 @@ Want me to commit it?
 
 ⏺ Committed. Branch is 1 commit ahead of origin/main, working tree clean (except PROMPTIT.md).
 
-# Prompti 32:
+# Prompti 32
+
+## Prompti
 
 ❯ Does the API and code follow these instructions: Tehtäväsi on toteuttaa yksinkertainen kokoushuoneiden varausrajapinta (API).  
  Palvelun tulee tarjota käyttäjille seuraavat toiminnot:  
@@ -1766,6 +1892,8 @@ Want me to commit it?
  ● Koodin laatu ja luettavuus  
  ● Virheenkäsittely  
  ● Rakenne
+
+## Vastaus
 
 ⏺ Let me verify the implementation against the requirements.
 
@@ -1820,9 +1948,13 @@ Laatu ✅
 Tietokantavirheitä ei käsitellä try-catch:lla. Jos esim. createBooking() heittää virheen, palvelin kaatuu. Haluatko että lisään  
  virheenkäsittelyn?
 
-# Prompti 33:
+# Prompti 33
+
+## Prompti
 
 ❯ yes add the error handling
+
+## Vastaus
 
 ⏺ Write(src/routes/bookingsRouter.ts)  
  ⎿  Added 19 lines, removed 9 lines  
@@ -1942,7 +2074,7 @@ Tietokantavirheitä ei käsitellä try-catch:lla. Jos esim. createBooking() heit
  22 });
 
 ⏺ Bash(npm run build)  
- ⎿  > vincit-rising-star-2026-ennakko@1.0.0 build
+ ⎿  > xxx-xxx-xxx-2026-ennakko@1.0.0 build
 
 > tsc
 
@@ -1964,9 +2096,13 @@ Global error handler (src/middleware/errorHandler.ts):
 Example response on DB error:  
  { "error": "Failed to create booking" }
 
-# Prompti 34:
+# Prompti 34
+
+## Prompti
 
 commit in Finnish
+
+## Vastaus
 
 ⏺ Bash(git status && git diff --stat)  
  ⎿  On branch main  
@@ -1988,24 +2124,26 @@ commit in Finnish
 
 ⏺ Committed. Branch is 2 commits ahead of origin/main, working tree clean.
 
-# Prompti 35:
+# Prompti 35
+
+## Prompti
 
 ❯ How does the global error handler in @src/middleware/errorHandler.ts work in practice?  
  ⎿  Read src/middleware/errorHandler.ts (12 lines)
 
+## Vastaus
+
 ⏺ The global error handler catches errors that are:
 
 1. Thrown in async middleware with next(error) - If you call next(error) in a route/middleware, Express passes it to the error handler
-2. Thrown synchronously - If code throws outside a try-catch  
-
+2. Thrown synchronously - If code throws outside a try-catch
 
 In practice with our current code:
 
 It's actually not being triggered because:
 
 -   All routes have their own try-catch blocks
--   Errors are caught and handled locally with res.status(500).json(...)  
-
+-   Errors are caught and handled locally with res.status(500).json(...)
 
 When it would trigger:
 
@@ -2026,14 +2164,106 @@ When it would trigger:
 What it doesn't catch:
 
 -   Errors inside try-catch (handled locally)
--   Unhandled promise rejections (need express-async-errors or manual wrapping)  
-
+-   Unhandled promise rejections (need express-async-errors or manual wrapping)
 
 Options:
 
 1. Keep as safety net - It's harmless, catches edge cases
 2. Remove route try-catches - Use only global handler (less duplication)
-3. Remove global handler - Since routes handle errors themselves  
-
+3. Remove global handler - Since routes handle errors themselves
 
 Which approach do you prefer?
+
+# Prompti 36
+
+## Prompti
+
+Format @PROMPTIT.md so that there are headers for the prompts and prompt answers  
+ ⎿  Read PROMPTIT.md (2000+ lines)
+
+## Vastaus
+
+⏺ I'll read the current PROMPTIT.md file and format it with proper headers.
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Error: File content (25238 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific  
+ portions of the file, or use the GrepTool to search for specific content.
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read 500 lines
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read 500 lines
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read 500 lines
+
+⏺ Let me read the rest of the file to see the full content.
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read 541 lines
+
+⏺ Bash(wc -l /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/PROMPTIT.md)  
+ ⎿   2039 /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/PROMPTIT.md
+
+⏺ Now I understand the structure. The file has 35 prompts with inconsistent formatting. I'll reformat it with proper headers for each prompt
+and answer section.
+
+⏺ Bash(cat /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/PROMPTIT.md | head -2039 > /tmp/promptit_original.md && echo "File  
+ saved for reference")  
+ ⎿  File saved for reference
+
+⏺ Write(/tmp/reformat_promptit.js)  
+ ⎿  Wrote 78 lines to ../../../../../tmp/reformat_promptit.js  
+ 1 const fs = require('fs');  
+ 2 const content = fs.readFileSync('/Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/PROMPTIT.md', 'utf-8');  
+ 3 const lines = content.split('\n');  
+ 4 let output = [];  
+ 5 let currentPromptNum = 0;  
+ 6 let inPrompt = false;  
+ 7 let inAnswer = false;  
+ 8 let promptLines = [];  
+ … +68 lines (ctrl+o to expand)
+
+⏺ Bash(node /tmp/reformat_promptit.js)  
+ ⎿  Done! Reformatted PROMPTIT.md
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read 150 lines
+
+⏺ Let me verify the formatting is consistent in the middle and end of the file.
+
+⏺ Search(pattern: "^# Prompti \d+$", path: "PROMPTIT.md", output_mode: "content")  
+ ⎿  Found 35 lines (ctrl+o to expand)
+
+⏺ Search(pattern: "^## (Prompti|Vastaus)$", path: "PROMPTIT.md", output_mode: "count")  
+ ⎿  Found 0 matches across 0 files
+
+⏺ Bash(grep -c "^## Prompti$" /Users/samih/Documents/code/xxx-xxx-xxx-2026-ennakko/PROMPTIT.md && grep -c "^## Vastaus$"  
+ /Users/samih/Documents/code/vincit-risi…)  
+ ⎿  35  
+ 35
+
+⏺ Read(PROMPTIT.md)  
+ ⎿  Read 50 lines
+
+⏺ Done. Reformatted PROMPTIT.md with consistent headers:
+
+Structure for each of the 35 prompts:
+
+# Prompti X
+
+## Prompti
+
+(prompt text)
+
+## Vastaus
+
+(answer text)
+
+Changes made:
+
+-   Standardized all main headers to # Prompti X format (was inconsistent: # 1, # Prompti 2:, etc.)
+-   Added ## Prompti subheader for each prompt text
+-   Added ## Vastaus subheader for each answer
+-   Added proper blank lines between sections
